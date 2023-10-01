@@ -6,17 +6,26 @@
     <title>&lt;my-element> Demo</title>
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/lit/polyfill-support.js"></script>
-    <script type="module" src="../my-element.js"></script>
+    <script type="module" src="../date-picker.js"></script>
     <style>
       p {
         border: solid 1px blue;
         padding: 8px;
       }
     </style>
+    <script>
+      onload = () => {
+        const myElement = document.querySelector('date-picker')
+        // myElement.addEventListener('date-changed', (e) => {
+        //   console.log('date-changed', e.detail)
+        // })
+        myElement.date = new Date()
+      }
+    </script>
   </head>
   <body>
-    <my-element>
+    <date-picker .date="${new Date()}">
       <p>This is child content</p>
-    </my-element>
+    </date-picker>
   </body>
 </html>
