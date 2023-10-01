@@ -1,10 +1,9 @@
 import { LitElement, PropertyValues } from 'lit';
 /**
- * An example element.
+ * A Date-Picker.
  *
- * @fires count-changed - Indicates when the count changes
+ * @fires selected-date-changed - Indicates when the count changes
  * @slot - This element has a slot
- * @csspart button - The button
  */
 export declare class DatePicker extends LitElement {
     static styles: import("lit").CSSResult;

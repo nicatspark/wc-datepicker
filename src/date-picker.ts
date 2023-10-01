@@ -3,11 +3,10 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
 /**
- * An example element.
+ * A Date-Picker.
  *
- * @fires count-changed - Indicates when the count changes
+ * @fires selected-date-changed - Indicates when the count changes
  * @slot - This element has a slot
- * @csspart button - The button
  */
 @customElement('date-picker')
 export class DatePicker extends LitElement {
