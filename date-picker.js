@@ -117,7 +117,7 @@ let DatePicker = class DatePicker extends LitElement {
           </button>
         </div>
       </div>
-      <p
+      <!--p
         >Days in
         ${this.date.toLocaleString(this.locale, {
             month: 'long',
@@ -140,7 +140,7 @@ let DatePicker = class DatePicker extends LitElement {
             })
             : 'none'}</b
         >
-      </p>
+      </p -->
 
       <!-- weekdays -->
       <ul class="weekdays grid">
@@ -175,6 +175,7 @@ let DatePicker = class DatePicker extends LitElement {
         ${this.getCalendarRemaningDays()}
       </ol>
       <slot></slot>
+      <div class="triangle"></div>
     `;
     }
     handleSelectDay(day) {
@@ -239,6 +240,7 @@ DatePicker.styles = css `
       --button-control-fg: #333;
       --button-control-fg-hover: #000;
       --weekday-fg: #999;
+      position: relative;
       display: block;
       border: solid 1px gray;
       padding: 16px;
@@ -248,6 +250,21 @@ DatePicker.styles = css `
       box-sizing: border-box;
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .triangle {
+        display: block;
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-bottom-color: #fff;
+        border-top: 0;
+        margin-left: -10px;
+      }
+    :host([hidden]) {
+      display: none !important;
     }
     .grid {
       display: grid;
@@ -260,7 +277,7 @@ DatePicker.styles = css `
     .weekdays > li {
         display: grid;
         place-items: center;
-        margin-block-end: 0.5em;
+        margin-block: 1em 0.5em;
         font-weight: bold;
         color: var(--weekday-fg);
       }
