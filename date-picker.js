@@ -37,15 +37,73 @@ let DatePicker = class DatePicker extends LitElement {
     render() {
         return html `
       <div class="calendar-head">
-        <div class="calendar-head__back">
-          <button @click="${this.handleChangeMonth('prev')}">&lt;</button>
+        <div class="calendar-head__controls">
+          <button @click="${this.handleChangeMonth('prev')}">
+            <div aria-hidden="true" data-comp="icon"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                focusable="false"
+                height="100%"
+                width="100%"
+              >
+                <path
+                  d="M12.69 14.161 8.564 9.995l4.124-4.167a1.077 1.077 0 0 0 0-1.514 1.051 1.051 0 0 0-1.499 0L6.31 9.243a1.077 1.077 0 0 0 0 1.514l4.88 4.929a1.051 1.051 0 0 0 1.5 0 1.1 1.1 0 0 0 0-1.525Z"
+                ></path></svg
+            ></div>
+          </button>
+          <button @click="${this.handleChangeMonth('prev')}">
+            <div aria-hidden="true" data-comp="icon"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                focusable="false"
+                height="100%"
+                width="100%"
+              >
+                <path
+                  d="M9.487 4.788a.97.97 0 0 1 0 1.398l-4 3.819 4 3.82a.95.95 0 0 1 0 1.387 1.061 1.061 0 0 1-1.453 0l-4.732-4.518a.95.95 0 0 1 0-1.388l4.732-4.518a1.061 1.061 0 0 1 1.453 0Zm7.211 0a.97.97 0 0 1 0 1.398l-4 3.819 4 3.82a.95.95 0 0 1 0 1.387 1.061 1.061 0 0 1-1.453 0l-4.732-4.518a.95.95 0 0 1 0-1.388l4.732-4.518a1.061 1.061 0 0 1 1.453 0Z"
+                ></path></svg
+            ></div>
+          </button>
         </div>
         <h4>
           ${this.date.toLocaleString('en-us', { month: 'long' })}
           ${this.date.getFullYear()}
         </h4>
-        <div class="calendar-head__fwd">
-          <button @click="${this.handleChangeMonth('next')}">&gt;</button>
+        <div class="calendar-head__controls">
+          <button @click="${this.handleChangeMonth('next')}">
+            <div aria-hidden="true" data-comp="icon"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                focusable="false"
+                height="100%"
+                width="100%"
+              >
+                <path
+                  d="m11.966 4.788 4.732 4.518a.95.95 0 0 1 0 1.388l-4.732 4.518a1.061 1.061 0 0 1-1.453 0 .97.97 0 0 1 0-1.398l4-3.819-4-3.82a.95.95 0 0 1 0-1.387 1.061 1.061 0 0 1 1.453 0Zm-7.21 0 4.731 4.518a.95.95 0 0 1 0 1.388l-4.732 4.518a1.061 1.061 0 0 1-1.453 0 .97.97 0 0 1 0-1.398l4-3.819-4-3.82a.95.95 0 0 1 0-1.387 1.061 1.061 0 0 1 1.453 0Z"
+                ></path></svg
+            ></div>
+          </button>
+          <button @click="${this.handleChangeMonth('next')}">
+            <div aria-hidden="true" data-comp="icon"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                focusable="false"
+                height="100%"
+                width="100%"
+              >
+                <path
+                  d="m7.31 5.839 4.125 4.166-4.124 4.167a1.077 1.077 0 0 0 0 1.514 1.051 1.051 0 0 0 1.499 0l4.88-4.929a1.077 1.077 0 0 0 0-1.514L8.81 4.314a1.051 1.051 0 0 0-1.5 0 1.1 1.1 0 0 0 0 1.525Z"
+                ></path></svg
+            ></div>
+          </button>
         </div>
       </div>
       <p
@@ -75,6 +133,7 @@ let DatePicker = class DatePicker extends LitElement {
 
       <!-- start of calendar -->
       <ol class="calendar grid">
+        <!-- previous month -->
         ${repeat(Array.from({
             length: this.getStartDay().getDay(),
         }, (_, i) => {
@@ -86,6 +145,7 @@ let DatePicker = class DatePicker extends LitElement {
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
             return html `<li class="day">${day}</li>`;
         })}
+        <!-- next month -->
         ${repeat(Array.from({
             length: 7 -
                 new Date(this.date.getFullYear(), this.date.getMonth(), this.numberOfDays + 1).getDay(),
@@ -177,6 +237,11 @@ DatePicker.styles = css `
         padding: 0;
         margin: 0;
         font-size: 1.2em;
+        & .calendar-head__controls {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
         & h4 {
           text-align: center;
           margin: 0;
@@ -187,6 +252,10 @@ DatePicker.styles = css `
           background-color: transparent;
           cursor: pointer;
           color: #333;
+          & > div {
+            width: 1em;
+            height: 1em;
+          }
           &:hover {
             color: #000;
           }
