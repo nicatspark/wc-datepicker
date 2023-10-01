@@ -47,12 +47,16 @@ export class DatePicker extends LitElement {
         display: grid;
         place-items: center;
         font-size: 1.2em;
+        cursor: pointer;
         &:empty {
           outline: 1px solid #ddd;
           background-color: #efefef;
         }
         &.prevmonth, &.nextmonth {
           color: #999;
+        }
+        &:hover {
+          background-color: #def;
         }
       }
       .calendar-head {
@@ -76,16 +80,6 @@ export class DatePicker extends LitElement {
 
   @property({ type: Object })
   date = new Date()
-
-  @property({ type: Array })
-  items = [
-    { id: 1, name: 'one' },
-    { id: 2, name: 'two' },
-    { id: 3, name: 'three' },
-  ]
-
-  @property()
-  name = 'World'
 
   /**
    * The number of times the button has been clicked.

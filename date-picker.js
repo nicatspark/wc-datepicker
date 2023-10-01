@@ -19,12 +19,6 @@ let DatePicker = class DatePicker extends LitElement {
         super(...arguments);
         this.numberOfDays = 0;
         this.date = new Date();
-        this.items = [
-            { id: 1, name: 'one' },
-            { id: 2, name: 'two' },
-            { id: 3, name: 'three' },
-        ];
-        this.name = 'World';
         /**
          * The number of times the button has been clicked.
          */
@@ -142,12 +136,16 @@ DatePicker.styles = css `
         display: grid;
         place-items: center;
         font-size: 1.2em;
+        cursor: pointer;
         &:empty {
           outline: 1px solid #ddd;
           background-color: #efefef;
         }
         &.prevmonth, &.nextmonth {
           color: #999;
+        }
+        &:hover {
+          background-color: #def;
         }
       }
       .calendar-head {
@@ -169,14 +167,8 @@ __decorate([
     state()
 ], DatePicker.prototype, "numberOfDays", void 0);
 __decorate([
-    property({ type: Object })
+    property({ type: Object, reflect: true })
 ], DatePicker.prototype, "date", void 0);
-__decorate([
-    property({ type: Array })
-], DatePicker.prototype, "items", void 0);
-__decorate([
-    property()
-], DatePicker.prototype, "name", void 0);
 __decorate([
     property({ type: Number })
 ], DatePicker.prototype, "count", void 0);

@@ -10,11 +10,6 @@ export declare class DatePicker extends LitElement {
     static styles: import("lit").CSSResult;
     numberOfDays: number;
     date: Date;
-    items: {
-        id: number;
-        name: string;
-    }[];
-    name: string;
     /**
      * The number of times the button has been clicked.
      */
