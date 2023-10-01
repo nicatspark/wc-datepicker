@@ -8,9 +8,18 @@
     <script src="../node_modules/lit/polyfill-support.js"></script>
     <script type="module" src="../date-picker.js"></script>
     <style>
-      p {
-        border: solid 1px blue;
-        padding: 8px;
+      #root {
+        position: fixed;
+        inset: 0;
+        padding-block-start: 10vh;
+        background-image: linear-gradient(
+          to bottom,
+          hsl(14, 100%, 5%) 50%,
+          hsl(50, 95%, 16%) 100%
+        );
+      }
+      date-picker {
+        margin-inline: auto;
       }
     </style>
     <script>
@@ -24,6 +33,6 @@
     </script>
   </head>
   <body>
-    <date-picker .date="${new Date()}"></date-picker>
+    <div id="root"><date-picker .date="${new Date()}"></date-picker></div>
   </body>
 </html>

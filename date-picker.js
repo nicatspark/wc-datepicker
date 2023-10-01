@@ -19,7 +19,9 @@ let DatePicker = class DatePicker extends LitElement {
         super(...arguments);
         this.numberOfDays = 0;
         this.numberOfDaysLastMonth = 0;
+        this.selectedDate = undefined;
         this.date = new Date();
+        this.locale = 'en-US';
         /**
          * The number of times the button has been clicked.
          */
@@ -35,6 +37,7 @@ let DatePicker = class DatePicker extends LitElement {
         }
     }
     render() {
+        var _a;
         return html `
       <div class="calendar-head">
         <div class="calendar-head__controls">
@@ -53,7 +56,7 @@ let DatePicker = class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeMonth('prev')}">
+          <button @click="${this.handleChangeYear('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -70,11 +73,11 @@ let DatePicker = class DatePicker extends LitElement {
           </button>
         </div>
         <h4>
-          ${this.date.toLocaleString('en-us', { month: 'long' })}
+          ${this.date.toLocaleString(this.locale, { month: 'long' })}
           ${this.date.getFullYear()}
         </h4>
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeMonth('next')}">
+          <button @click="${this.handleChangeYear('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -108,23 +111,34 @@ let DatePicker = class DatePicker extends LitElement {
       </div>
       <p
         >Days in
-        ${this.date.toLocaleString('default', {
+        ${this.date.toLocaleString(this.locale, {
             month: 'long',
         })}:
         ${this.numberOfDays}<br />
         Previous month had: ${this.numberOfDaysLastMonth} <br />First of the
         month occurs on a:
-        ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).toLocaleString('default', {
+        ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).toLocaleString(this.locale, {
             weekday: 'long',
         })}
         = ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay()}
+        <br />
+        Selected date:
+        <b>
+          ${this.selectedDate
+            ? (_a = this.selectedDate) === null || _a === void 0 ? void 0 : _a.toLocaleString(this.locale, {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+            })
+            : 'none'}</b
+        >
       </p>
 
       <!-- weekdays -->
       <ul class="weekdays grid">
         ${repeat(Array.from({ length: 7 }, (_, i) => i), (day) => day, (day) => {
             return html `<li
-              >${new Intl.DateTimeFormat('en-US', {
+              >${new Intl.DateTimeFormat(this.locale, {
                 weekday: 'short',
             }).format(new Date(2018, 0, day))}
             </li>`;
@@ -143,9 +157,15 @@ let DatePicker = class DatePicker extends LitElement {
         })}
         <!-- current days -->
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
+            var _a;
             return html `<li
-              class="day"
-              @click="${() => console.log('day', day)}"
+              class="day${((_a = this.selectedDate) === null || _a === void 0 ? void 0 : _a.getTime()) ===
+                new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime()
+                ? ' selected'
+                : ''}${new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime() === new Date().setHours(0, 0, 0, 0)
+                ? ' today'
+                : ''}"
+              @click="${() => (this.selectedDate = new Date(this.date.getFullYear(), this.date.getMonth(), day))}"
               >${day}</li
             >`;
         })}
@@ -165,6 +185,12 @@ let DatePicker = class DatePicker extends LitElement {
         return () => {
             const dir = direction === 'prev' ? -1 : 1;
             this.date = new Date(this.date.getFullYear(), this.date.getMonth() + dir, 1);
+        };
+    }
+    handleChangeYear(direction) {
+        return () => {
+            const dir = direction === 'prev' ? -1 : 1;
+            this.date = new Date(this.date.getFullYear() + dir, this.date.getMonth(), 1);
         };
     }
     getStartDay(date) {
@@ -195,6 +221,8 @@ DatePicker.styles = css `
       font-size: 0.7rem;
       font-family: Helvetica, sans-serif;
       box-sizing: border-box;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
     .grid {
       display: grid;
@@ -223,6 +251,13 @@ DatePicker.styles = css `
         place-items: center;
         font-size: 1.2em;
         cursor: pointer;
+        &.today {
+          background-color: #eee;
+        }
+        &.selected {
+          background-color: rgb(15, 88, 214);
+          color: white;
+        }
         &:empty {
           outline: 1px solid #ddd;
           background-color: #efefef;
@@ -230,7 +265,7 @@ DatePicker.styles = css `
         &.prevmonth, &.nextmonth {
           color: #999;
         }
-        &:hover {
+        &:not(.selected):hover {
           background-color: #def;
         }
       }
@@ -274,8 +309,14 @@ __decorate([
     state()
 ], DatePicker.prototype, "numberOfDaysLastMonth", void 0);
 __decorate([
+    state()
+], DatePicker.prototype, "selectedDate", void 0);
+__decorate([
     property({ type: Object })
 ], DatePicker.prototype, "date", void 0);
+__decorate([
+    property({ reflect: true })
+], DatePicker.prototype, "locale", void 0);
 __decorate([
     property({ type: Number })
 ], DatePicker.prototype, "count", void 0);

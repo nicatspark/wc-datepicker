@@ -20,6 +20,8 @@ export class DatePicker extends LitElement {
       font-size: 0.7rem;
       font-family: Helvetica, sans-serif;
       box-sizing: border-box;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
     .grid {
       display: grid;
@@ -48,6 +50,13 @@ export class DatePicker extends LitElement {
         place-items: center;
         font-size: 1.2em;
         cursor: pointer;
+        &.today {
+          background-color: #eee;
+        }
+        &.selected {
+          background-color: rgb(15, 88, 214);
+          color: white;
+        }
         &:empty {
           outline: 1px solid #ddd;
           background-color: #efefef;
@@ -55,7 +64,7 @@ export class DatePicker extends LitElement {
         &.prevmonth, &.nextmonth {
           color: #999;
         }
-        &:hover {
+        &:not(.selected):hover {
           background-color: #def;
         }
       }
@@ -99,8 +108,14 @@ export class DatePicker extends LitElement {
   @state()
   numberOfDaysLastMonth = 0
 
+  @state()
+  selectedDate: Date | undefined = undefined
+
   @property({ type: Object })
   date = new Date()
+
+  @property({ reflect: true })
+  locale = 'en-US'
 
   /**
    * The number of times the button has been clicked.
@@ -145,7 +160,7 @@ export class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeMonth('prev')}">
+          <button @click="${this.handleChangeYear('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -162,11 +177,11 @@ export class DatePicker extends LitElement {
           </button>
         </div>
         <h4>
-          ${this.date.toLocaleString('en-us', { month: 'long' })}
+          ${this.date.toLocaleString(this.locale, { month: 'long' })}
           ${this.date.getFullYear()}
         </h4>
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeMonth('next')}">
+          <button @click="${this.handleChangeYear('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -200,7 +215,7 @@ export class DatePicker extends LitElement {
       </div>
       <p
         >Days in
-        ${this.date.toLocaleString('default', {
+        ${this.date.toLocaleString(this.locale, {
           month: 'long',
         })}:
         ${this.numberOfDays}<br />
@@ -210,10 +225,21 @@ export class DatePicker extends LitElement {
           this.date.getFullYear(),
           this.date.getMonth(),
           1
-        ).toLocaleString('default', {
+        ).toLocaleString(this.locale, {
           weekday: 'long',
         })}
         = ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay()}
+        <br />
+        Selected date:
+        <b>
+          ${this.selectedDate
+            ? this.selectedDate?.toLocaleString(this.locale, {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })
+            : 'none'}</b
+        >
       </p>
 
       <!-- weekdays -->
@@ -223,7 +249,7 @@ export class DatePicker extends LitElement {
           (day) => day,
           (day) => {
             return html`<li
-              >${new Intl.DateTimeFormat('en-US', {
+              >${new Intl.DateTimeFormat(this.locale, {
                 weekday: 'short',
               }).format(new Date(2018, 0, day))}
             </li>`
@@ -256,8 +282,26 @@ export class DatePicker extends LitElement {
           (day) => day,
           (day) => {
             return html`<li
-              class="day"
-              @click="${() => console.log('day', day)}"
+              class="day${this.selectedDate?.getTime() ===
+              new Date(
+                this.date.getFullYear(),
+                this.date.getMonth(),
+                day
+              ).getTime()
+                ? ' selected'
+                : ''}${new Date(
+                this.date.getFullYear(),
+                this.date.getMonth(),
+                day
+              ).getTime() === new Date().setHours(0, 0, 0, 0)
+                ? ' today'
+                : ''}"
+              @click="${() =>
+                (this.selectedDate = new Date(
+                  this.date.getFullYear(),
+                  this.date.getMonth(),
+                  day
+                ))}"
               >${day}</li
             >`
           }
@@ -293,6 +337,17 @@ export class DatePicker extends LitElement {
       this.date = new Date(
         this.date.getFullYear(),
         this.date.getMonth() + dir,
+        1
+      )
+    }
+  }
+
+  private handleChangeYear(direction: 'prev' | 'next') {
+    return () => {
+      const dir = direction === 'prev' ? -1 : 1
+      this.date = new Date(
+        this.date.getFullYear() + dir,
+        this.date.getMonth(),
         1
       )
     }
