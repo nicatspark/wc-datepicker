@@ -19,16 +19,13 @@ export declare class DatePicker extends LitElement {
     count: number;
     willUpdate(changedProperties: PropertyValues<this>): void;
     render(): import("lit-html").TemplateResult<1>;
-    private getRemaningDays;
-    private monthStartsOn;
-    private handleChangeMonth;
-    private handleChangeYear;
-    private getStartDay;
-    /**
-     * Formats a greeting
-     * @param name The name to say "Hello" to
-     */
-    sayHello(name: string): string;
+    private handleSelectDay;
+    private getCalendarPreMonthDays;
+    private getCalendarRemaningDays;
+    private calendarMonthStartsOn;
+    private handleChangeCalendarMonth;
+    private handleChangeCalendarYear;
+    private getCalendarStartDay;
 }
 declare global {
     interface HTMLElementTagNameMap {

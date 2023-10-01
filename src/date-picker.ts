@@ -148,7 +148,7 @@ export class DatePicker extends LitElement {
     return html`
       <div class="calendar-head">
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeMonth('prev')}">
+          <button @click="${this.handleChangeCalendarMonth('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +163,7 @@ export class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeYear('prev')}">
+          <button @click="${this.handleChangeCalendarYear('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +184,7 @@ export class DatePicker extends LitElement {
           ${this.date.getFullYear()}
         </h4>
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeYear('next')}">
+          <button @click="${this.handleChangeCalendarYear('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +199,7 @@ export class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeMonth('next')}">
+          <button @click="${this.handleChangeCalendarMonth('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +231,7 @@ export class DatePicker extends LitElement {
         ).toLocaleString(this.locale, {
           weekday: 'long',
         })}
-        = ${this.monthStartsOn()}
+        = ${this.calendarMonthStartsOn()}
         <br />
         Selected date:
         <b>
@@ -263,22 +263,7 @@ export class DatePicker extends LitElement {
       <!-- start of calendar -->
       <ol class="calendar grid">
         <!-- previous month -->
-        ${repeat(
-          Array.from(
-            {
-              length: this.getStartDay().getDay(),
-            },
-            (_, i) => {
-              return (
-                this.numberOfDaysLastMonth - this.getStartDay().getDay() + 1 + i
-              )
-            }
-          ),
-          (day) => day,
-          (day) => {
-            return html`<li class="day prevmonth">${day}</li>`
-          }
-        )}
+        ${this.getCalendarPreMonthDays()}
         <!-- current days -->
         ${repeat(
           Array.from({ length: this.numberOfDays }, (_, i) => i + 1),
@@ -299,25 +284,53 @@ export class DatePicker extends LitElement {
               ).getTime() === new Date().setHours(0, 0, 0, 0)
                 ? ' today'
                 : ''}"
-              @click="${() =>
-                (this.selectedDate = new Date(
-                  this.date.getFullYear(),
-                  this.date.getMonth(),
-                  day
-                ))}"
+              @click="${() => this.handleSelectDay(day)}"
               >${day}</li
             >`
           }
         )}
         <!-- next month -->
-        ${this.getRemaningDays()}
+        ${this.getCalendarRemaningDays()}
       </ol>
       <slot></slot>
     `
   }
 
-  private getRemaningDays() {
-    if ((this.numberOfDays + this.monthStartsOn()) % 7 === 0) {
+  private handleSelectDay(day: number) {
+    this.selectedDate = new Date(
+      this.date.getFullYear(),
+      this.date.getMonth(),
+      day
+    )
+    this.dispatchEvent(
+      new CustomEvent('selected-date-changed', { detail: this.selectedDate })
+    )
+  }
+
+  private getCalendarPreMonthDays() {
+    return repeat(
+      Array.from(
+        {
+          length: this.getCalendarStartDay().getDay(),
+        },
+        (_, i) => {
+          return (
+            this.numberOfDaysLastMonth -
+            this.getCalendarStartDay().getDay() +
+            1 +
+            i
+          )
+        }
+      ),
+      (day) => day,
+      (day) => {
+        return html`<li class="day prevmonth">${day}</li>`
+      }
+    )
+  }
+
+  private getCalendarRemaningDays() {
+    if ((this.numberOfDays + this.calendarMonthStartsOn()) % 7 === 0) {
       return ''
     }
     return repeat(
@@ -340,14 +353,14 @@ export class DatePicker extends LitElement {
     )
   }
 
-  private monthStartsOn({
+  private calendarMonthStartsOn({
     year = this.date.getFullYear(),
     month = this.date.getMonth(),
   } = {}) {
     return new Date(year, month, 1).getDay()
   }
 
-  private handleChangeMonth(direction: 'prev' | 'next') {
+  private handleChangeCalendarMonth(direction: 'prev' | 'next') {
     return () => {
       const dir = direction === 'prev' ? -1 : 1
       this.date = new Date(
@@ -358,7 +371,7 @@ export class DatePicker extends LitElement {
     }
   }
 
-  private handleChangeYear(direction: 'prev' | 'next') {
+  private handleChangeCalendarYear(direction: 'prev' | 'next') {
     return () => {
       const dir = direction === 'prev' ? -1 : 1
       this.date = new Date(
@@ -369,7 +382,7 @@ export class DatePicker extends LitElement {
     }
   }
 
-  private getStartDay(date?: Date) {
+  private getCalendarStartDay(date?: Date) {
     const aDate = date ?? this.date
     return new Date(aDate.getFullYear(), aDate.getMonth(), 1)
     /* .toLocaleString('default', {
@@ -386,9 +399,6 @@ export class DatePicker extends LitElement {
    * Formats a greeting
    * @param name The name to say "Hello" to
    */
-  sayHello(name: string): string {
-    return `Hello, ${name}`
-  }
 }
 
 declare global {

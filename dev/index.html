@@ -15,8 +15,14 @@
         background-image: linear-gradient(
           to bottom,
           hsl(14, 100%, 5%) 50%,
-          hsl(50, 95%, 16%) 100%
+          rgb(15, 88, 214) 100%
         );
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      h1 {
+        color: rgb(15, 88, 214);
+        margin-block-start: 2rem;
+        text-align: center;
       }
       date-picker {
         margin-inline: auto;
@@ -29,10 +35,33 @@
         //   console.log('date-changed', e.detail)
         // })
         myElement.date = new Date()
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }
+        myElement.addEventListener('selected-date-changed', (e) => {
+          const selectedDay = document.querySelector('#selectedday')
+          selectedDay.innerHTML = e.detail.toLocaleDateString('en-us', options)
+          Object.assign(selectedDay.style, {
+            opacity: 0,
+            transition: 'none',
+          })
+          setTimeout(() => {
+            Object.assign(selectedDay.style, {
+              opacity: 1,
+              transition: 'all 1s ease-in-out',
+            })
+          })
+        })
       }
     </script>
   </head>
   <body>
-    <div id="root"><date-picker .date="${new Date()}"></date-picker></div>
+    <div id="root"
+      ><date-picker .date="${new Date()}"></date-picker>
+      <h1 id="selectedday"></h1
+    ></div>
   </body>
 </html>

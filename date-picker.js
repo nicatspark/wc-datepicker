@@ -26,6 +26,14 @@ let DatePicker = class DatePicker extends LitElement {
          * The number of times the button has been clicked.
          */
         this.count = 0;
+        // private _onClick() {
+        //   this.count++
+        //   this.dispatchEvent(new CustomEvent('count-changed'))
+        // }
+        /**
+         * Formats a greeting
+         * @param name The name to say "Hello" to
+         */
     }
     willUpdate(changedProperties) {
         // only need to check changed properties for an expensive computation.
@@ -41,7 +49,7 @@ let DatePicker = class DatePicker extends LitElement {
         return html `
       <div class="calendar-head">
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeMonth('prev')}">
+          <button @click="${this.handleChangeCalendarMonth('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +64,7 @@ let DatePicker = class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeYear('prev')}">
+          <button @click="${this.handleChangeCalendarYear('prev')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +85,7 @@ let DatePicker = class DatePicker extends LitElement {
           ${this.date.getFullYear()}
         </h4>
         <div class="calendar-head__controls">
-          <button @click="${this.handleChangeYear('next')}">
+          <button @click="${this.handleChangeCalendarYear('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +100,7 @@ let DatePicker = class DatePicker extends LitElement {
                 ></path></svg
             ></div>
           </button>
-          <button @click="${this.handleChangeMonth('next')}">
+          <button @click="${this.handleChangeCalendarMonth('next')}">
             <div aria-hidden="true" data-comp="icon"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +128,7 @@ let DatePicker = class DatePicker extends LitElement {
         ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).toLocaleString(this.locale, {
             weekday: 'long',
         })}
-        = ${this.monthStartsOn()}
+        = ${this.calendarMonthStartsOn()}
         <br />
         Selected date:
         <b>
@@ -148,13 +156,7 @@ let DatePicker = class DatePicker extends LitElement {
       <!-- start of calendar -->
       <ol class="calendar grid">
         <!-- previous month -->
-        ${repeat(Array.from({
-            length: this.getStartDay().getDay(),
-        }, (_, i) => {
-            return (this.numberOfDaysLastMonth - this.getStartDay().getDay() + 1 + i);
-        }), (day) => day, (day) => {
-            return html `<li class="day prevmonth">${day}</li>`;
-        })}
+        ${this.getCalendarPreMonthDays()}
         <!-- current days -->
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
             var _a;
@@ -165,18 +167,34 @@ let DatePicker = class DatePicker extends LitElement {
                 : ''}${new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime() === new Date().setHours(0, 0, 0, 0)
                 ? ' today'
                 : ''}"
-              @click="${() => (this.selectedDate = new Date(this.date.getFullYear(), this.date.getMonth(), day))}"
+              @click="${() => this.handleSelectDay(day)}"
               >${day}</li
             >`;
         })}
         <!-- next month -->
-        ${this.getRemaningDays()}
+        ${this.getCalendarRemaningDays()}
       </ol>
       <slot></slot>
     `;
     }
-    getRemaningDays() {
-        if ((this.numberOfDays + this.monthStartsOn()) % 7 === 0) {
+    handleSelectDay(day) {
+        this.selectedDate = new Date(this.date.getFullYear(), this.date.getMonth(), day);
+        this.dispatchEvent(new CustomEvent('selected-date-changed', { detail: this.selectedDate }));
+    }
+    getCalendarPreMonthDays() {
+        return repeat(Array.from({
+            length: this.getCalendarStartDay().getDay(),
+        }, (_, i) => {
+            return (this.numberOfDaysLastMonth -
+                this.getCalendarStartDay().getDay() +
+                1 +
+                i);
+        }), (day) => day, (day) => {
+            return html `<li class="day prevmonth">${day}</li>`;
+        });
+    }
+    getCalendarRemaningDays() {
+        if ((this.numberOfDays + this.calendarMonthStartsOn()) % 7 === 0) {
             return '';
         }
         return repeat(Array.from({
@@ -186,38 +204,27 @@ let DatePicker = class DatePicker extends LitElement {
             return html `<li class="day nextmonth">${day + 1}</li>`;
         });
     }
-    monthStartsOn({ year = this.date.getFullYear(), month = this.date.getMonth(), } = {}) {
+    calendarMonthStartsOn({ year = this.date.getFullYear(), month = this.date.getMonth(), } = {}) {
         return new Date(year, month, 1).getDay();
     }
-    handleChangeMonth(direction) {
+    handleChangeCalendarMonth(direction) {
         return () => {
             const dir = direction === 'prev' ? -1 : 1;
             this.date = new Date(this.date.getFullYear(), this.date.getMonth() + dir, 1);
         };
     }
-    handleChangeYear(direction) {
+    handleChangeCalendarYear(direction) {
         return () => {
             const dir = direction === 'prev' ? -1 : 1;
             this.date = new Date(this.date.getFullYear() + dir, this.date.getMonth(), 1);
         };
     }
-    getStartDay(date) {
+    getCalendarStartDay(date) {
         const aDate = date !== null && date !== void 0 ? date : this.date;
         return new Date(aDate.getFullYear(), aDate.getMonth(), 1);
         /* .toLocaleString('default', {
           weekday: 'long',
         }) */
-    }
-    // private _onClick() {
-    //   this.count++
-    //   this.dispatchEvent(new CustomEvent('count-changed'))
-    // }
-    /**
-     * Formats a greeting
-     * @param name The name to say "Hello" to
-     */
-    sayHello(name) {
-        return `Hello, ${name}`;
     }
 };
 DatePicker.styles = css `
