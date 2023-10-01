@@ -9,6 +9,7 @@ import { LitElement, PropertyValues } from 'lit';
 export declare class DatePicker extends LitElement {
     static styles: import("lit").CSSResult;
     numberOfDays: number;
+    numberOfDaysLastMonth: number;
     date: Date;
     /**
      * The number of times the button has been clicked.
@@ -16,6 +17,8 @@ export declare class DatePicker extends LitElement {
     count: number;
     willUpdate(changedProperties: PropertyValues<this>): void;
     render(): import("lit-html").TemplateResult<1>;
+    private handleChangeMonth;
+    private getStartDay;
     /**
      * Formats a greeting
      * @param name The name to say "Hello" to

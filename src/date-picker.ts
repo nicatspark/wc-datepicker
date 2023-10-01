@@ -71,12 +71,24 @@ export class DatePicker extends LitElement {
           margin: 0;
           padding: 0;
         }
+        & button {
+          border: none;
+          background-color: transparent;
+          cursor: pointer;
+          color: #333;
+          &:hover {
+            color: #000;
+          }
+        }
       }
     }
   `
 
   @state()
   numberOfDays = 0
+
+  @state()
+  numberOfDaysLastMonth = 0
 
   @property({ type: Object })
   date = new Date()
@@ -97,31 +109,36 @@ export class DatePicker extends LitElement {
         this.date.getMonth() + 1,
         0
       ).getDate()
+      this.numberOfDaysLastMonth = new Date(
+        this.date.getFullYear(),
+        this.date.getMonth(),
+        0
+      ).getDate()
     }
   }
 
   override render() {
     return html`
       <div class="calendar-head">
-        <div class="calendar-head__back">&lt;</div>
-
-        <h4
-          >${this.date.toLocaleString('en-us', {
-            month: 'long',
-          })}
-          ${this.date.getFullYear()}</h4
-        >
-        <div class="calendar-head__fwd">&gt;</div>
+        <div class="calendar-head__back">
+          <button @click="${this.handleChangeMonth('prev')}">&lt;</button>
+        </div>
+        <h4>
+          ${this.date.toLocaleString('en-us', { month: 'long' })}
+          ${this.date.getFullYear()}
+        </h4>
+        <div class="calendar-head__fwd">
+          <button @click="${this.handleChangeMonth('next')}">&gt;</button>
+        </div>
       </div>
       <p
         >Days in
         ${this.date.toLocaleString('default', {
           month: 'long',
         })}:
-        ${this.numberOfDays}</p
-      >
-      <p
-        >First of the month occurs on a:
+        ${this.numberOfDays}<br />
+        Previous month had: ${this.numberOfDaysLastMonth} <br />First of the
+        month occurs on a:
         ${new Date(
           this.date.getFullYear(),
           this.date.getMonth(),
@@ -131,6 +148,8 @@ export class DatePicker extends LitElement {
         })}
         = ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay()}
       </p>
+
+      <!-- weekdays -->
       <ul class="weekdays grid">
         ${repeat(
           Array.from({ length: 7 }, (_, i) => i),
@@ -144,23 +163,26 @@ export class DatePicker extends LitElement {
           }
         )}
       </ul>
+
+      <!-- start of calendar -->
       <ol class="calendar grid">
         ${repeat(
           Array.from(
             {
-              length: new Date(
-                this.date.getFullYear(),
-                this.date.getMonth(),
-                1
-              ).getDay(),
+              length: this.getStartDay().getDay(),
             },
-            (_, i) => i
+            (_, i) => {
+              return (
+                this.numberOfDaysLastMonth - this.getStartDay().getDay() + 1 + i
+              )
+            }
           ),
           (day) => day,
-          () => {
-            return html`<li class="day prevmonth"></li>`
+          (day) => {
+            return html`<li class="day prevmonth">${day}</li>`
           }
         )}
+        <!-- current days -->
         ${repeat(
           Array.from({ length: this.numberOfDays }, (_, i) => i + 1),
           (day) => day,
@@ -190,6 +212,25 @@ export class DatePicker extends LitElement {
 
       <slot></slot>
     `
+  }
+
+  private handleChangeMonth(direction: 'prev' | 'next') {
+    return () => {
+      const dir = direction === 'prev' ? -1 : 1
+      this.date = new Date(
+        this.date.getFullYear(),
+        this.date.getMonth() + dir,
+        1
+      )
+    }
+  }
+
+  private getStartDay(date?: Date) {
+    const aDate = date ?? this.date
+    return new Date(aDate.getFullYear(), aDate.getMonth(), 1)
+    /* .toLocaleString('default', {
+      weekday: 'long',
+    }) */
   }
 
   // private _onClick() {

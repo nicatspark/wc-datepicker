@@ -18,6 +18,7 @@ let DatePicker = class DatePicker extends LitElement {
     constructor() {
         super(...arguments);
         this.numberOfDays = 0;
+        this.numberOfDaysLastMonth = 0;
         this.date = new Date();
         /**
          * The number of times the button has been clicked.
@@ -30,35 +31,38 @@ let DatePicker = class DatePicker extends LitElement {
             // calculate month with days for the app.
             console.log('changedProperties', changedProperties);
             this.numberOfDays = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0).getDate();
+            this.numberOfDaysLastMonth = new Date(this.date.getFullYear(), this.date.getMonth(), 0).getDate();
         }
     }
     render() {
         return html `
       <div class="calendar-head">
-        <div class="calendar-head__back">&lt;</div>
-
-        <h4
-          >${this.date.toLocaleString('en-us', {
-            month: 'long',
-        })}
-          ${this.date.getFullYear()}</h4
-        >
-        <div class="calendar-head__fwd">&gt;</div>
+        <div class="calendar-head__back">
+          <button @click="${this.handleChangeMonth('prev')}">&lt;</button>
+        </div>
+        <h4>
+          ${this.date.toLocaleString('en-us', { month: 'long' })}
+          ${this.date.getFullYear()}
+        </h4>
+        <div class="calendar-head__fwd">
+          <button @click="${this.handleChangeMonth('next')}">&gt;</button>
+        </div>
       </div>
       <p
         >Days in
         ${this.date.toLocaleString('default', {
             month: 'long',
         })}:
-        ${this.numberOfDays}</p
-      >
-      <p
-        >First of the month occurs on a:
+        ${this.numberOfDays}<br />
+        Previous month had: ${this.numberOfDaysLastMonth} <br />First of the
+        month occurs on a:
         ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).toLocaleString('default', {
             weekday: 'long',
         })}
         = ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay()}
       </p>
+
+      <!-- weekdays -->
       <ul class="weekdays grid">
         ${repeat(Array.from({ length: 7 }, (_, i) => i), (day) => day, (day) => {
             return html `<li
@@ -68,12 +72,17 @@ let DatePicker = class DatePicker extends LitElement {
             </li>`;
         })}
       </ul>
+
+      <!-- start of calendar -->
       <ol class="calendar grid">
         ${repeat(Array.from({
-            length: new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay(),
-        }, (_, i) => i), (day) => day, () => {
-            return html `<li class="day prevmonth"></li>`;
+            length: this.getStartDay().getDay(),
+        }, (_, i) => {
+            return (this.numberOfDaysLastMonth - this.getStartDay().getDay() + 1 + i);
+        }), (day) => day, (day) => {
+            return html `<li class="day prevmonth">${day}</li>`;
         })}
+        <!-- current days -->
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
             return html `<li class="day">${day}</li>`;
         })}
@@ -87,6 +96,19 @@ let DatePicker = class DatePicker extends LitElement {
 
       <slot></slot>
     `;
+    }
+    handleChangeMonth(direction) {
+        return () => {
+            const dir = direction === 'prev' ? -1 : 1;
+            this.date = new Date(this.date.getFullYear(), this.date.getMonth() + dir, 1);
+        };
+    }
+    getStartDay(date) {
+        const aDate = date !== null && date !== void 0 ? date : this.date;
+        return new Date(aDate.getFullYear(), aDate.getMonth(), 1);
+        /* .toLocaleString('default', {
+          weekday: 'long',
+        }) */
     }
     // private _onClick() {
     //   this.count++
@@ -160,6 +182,15 @@ DatePicker.styles = css `
           margin: 0;
           padding: 0;
         }
+        & button {
+          border: none;
+          background-color: transparent;
+          cursor: pointer;
+          color: #333;
+          &:hover {
+            color: #000;
+          }
+        }
       }
     }
   `;
@@ -167,7 +198,10 @@ __decorate([
     state()
 ], DatePicker.prototype, "numberOfDays", void 0);
 __decorate([
-    property({ type: Object, reflect: true })
+    state()
+], DatePicker.prototype, "numberOfDaysLastMonth", void 0);
+__decorate([
+    property({ type: Object })
 ], DatePicker.prototype, "date", void 0);
 __decorate([
     property({ type: Number })
