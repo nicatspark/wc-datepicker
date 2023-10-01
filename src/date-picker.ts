@@ -255,7 +255,11 @@ export class DatePicker extends LitElement {
           Array.from({ length: this.numberOfDays }, (_, i) => i + 1),
           (day) => day,
           (day) => {
-            return html`<li class="day">${day}</li>`
+            return html`<li
+              class="day"
+              @click="${() => console.log('day', day)}"
+              >${day}</li
+            >`
           }
         )}
         <!-- next month -->
