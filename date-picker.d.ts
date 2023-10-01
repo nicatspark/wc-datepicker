@@ -19,6 +19,8 @@ export declare class DatePicker extends LitElement {
     count: number;
     willUpdate(changedProperties: PropertyValues<this>): void;
     render(): import("lit-html").TemplateResult<1>;
+    private getRemaningDays;
+    private monthStartsOn;
     private handleChangeMonth;
     private handleChangeYear;
     private getStartDay;

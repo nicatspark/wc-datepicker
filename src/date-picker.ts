@@ -13,6 +13,16 @@ import { repeat } from 'lit/directives/repeat.js'
 export class DatePicker extends LitElement {
   static override styles = css`
     :host {
+      --selected-bg: rgb(15, 88, 214);
+      --selected-fg: #fff;
+      --today: #eee;
+      --today-fg: #000;
+      --other-month-fg: #999;
+      --hover-bg: #def;
+      --day-outline: #ccc;
+      --button-control-fg: #333;
+      --button-control-fg-hover: #000;
+      --weekday-fg: #999;
       display: block;
       border: solid 1px gray;
       padding: 16px;
@@ -36,36 +46,29 @@ export class DatePicker extends LitElement {
         place-items: center;
         margin-block-end: 0.5em;
         font-weight: bold;
-        color: #999;
-        &:empty {
-          border: 1px solid #ddd;
-          background-color: #efefef;
-        }
+        color: var(--weekday-fg);
       }
     .calendar > li {
         aspect-ratio: 1;
-        outline: solid 1px #ccc;
+        outline: solid 1px var(--day-outline);
         background-color: #fff;
         display: grid;
         place-items: center;
         font-size: 1.2em;
         cursor: pointer;
         &.today {
-          background-color: #eee;
+          background-color: var(--today);
+          color: var(--today-fg);
         }
         &.selected {
-          background-color: rgb(15, 88, 214);
-          color: white;
-        }
-        &:empty {
-          outline: 1px solid #ddd;
-          background-color: #efefef;
+          background-color: var(--selected-bg);
+          color: var(--selected-fg);
         }
         &.prevmonth, &.nextmonth {
-          color: #999;
+          color: var(--other-month-fg);
         }
         &:not(.selected):hover {
-          background-color: #def;
+          background-color: var(--hover-bg);
         }
       }
       .calendar-head {
@@ -89,13 +92,13 @@ export class DatePicker extends LitElement {
           border: none;
           background-color: transparent;
           cursor: pointer;
-          color: #333;
+          color: var(--button-control-fg);
           & > div {
             width: 1em;
             height: 1em;
           }
           &:hover {
-            color: #000;
+            color: var(--button-control-fg-hover);
           }
         }
       }
@@ -228,7 +231,7 @@ export class DatePicker extends LitElement {
         ).toLocaleString(this.locale, {
           weekday: 'long',
         })}
-        = ${new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay()}
+        = ${this.monthStartsOn()}
         <br />
         Selected date:
         <b>
@@ -307,28 +310,41 @@ export class DatePicker extends LitElement {
           }
         )}
         <!-- next month -->
-        ${repeat(
-          Array.from(
-            {
-              length:
-                7 -
-                new Date(
-                  this.date.getFullYear(),
-                  this.date.getMonth(),
-                  this.numberOfDays + 1
-                ).getDay(),
-            },
-            (_, i) => i
-          ),
-          (day) => day,
-          (day) => {
-            return html`<li class="day nextmonth">${day + 1}</li>`
-          }
-        )}
+        ${this.getRemaningDays()}
       </ol>
-
       <slot></slot>
     `
+  }
+
+  private getRemaningDays() {
+    if ((this.numberOfDays + this.monthStartsOn()) % 7 === 0) {
+      return ''
+    }
+    return repeat(
+      Array.from(
+        {
+          length:
+            7 -
+            new Date(
+              this.date.getFullYear(),
+              this.date.getMonth(),
+              this.numberOfDays + 1
+            ).getDay(),
+        },
+        (_, i) => i
+      ),
+      (day) => day,
+      (day) => {
+        return html`<li class="day nextmonth">${day + 1}</li>`
+      }
+    )
+  }
+
+  private monthStartsOn({
+    year = this.date.getFullYear(),
+    month = this.date.getMonth(),
+  } = {}) {
+    return new Date(year, month, 1).getDay()
   }
 
   private handleChangeMonth(direction: 'prev' | 'next') {
