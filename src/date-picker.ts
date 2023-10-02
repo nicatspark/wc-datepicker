@@ -311,7 +311,7 @@ export class DatePicker extends LitElement {
                   month: 'short',
                   day: 'numeric',
                 })}"
-                @click="${() => this.handleSelectDay(day)}"
+                @click="${() => this.handleSelectDay({ day })}"
                 >${day}</button
               ></li
             >`
@@ -325,12 +325,16 @@ export class DatePicker extends LitElement {
     `
   }
 
-  private handleSelectDay(day: number) {
-    this.selectedDate = new Date(
-      this.date.getFullYear(),
-      this.date.getMonth(),
-      day
-    )
+  private handleSelectDay({
+    year = this.date.getFullYear(),
+    month = this.date.getMonth(),
+    day,
+  }: {
+    day: number
+    month?: number
+    year?: number
+  }) {
+    this.selectedDate = new Date(year, month, day)
     this.dispatchEvent(
       new CustomEvent('selected-date-changed', { detail: this.selectedDate })
     )
@@ -354,7 +358,14 @@ export class DatePicker extends LitElement {
       (day) => day,
       (day) => {
         return html`<li class="day "
-          ><button class="prevmonth">${day}</button></li
+          ><button
+            class="prevmonth"
+            @click="${() => {
+              this.handleSelectDay({ month: this.date.getMonth() - 1, day })
+              this.handleChangeCalendarMonth('prev')()
+            }}"
+            >${day}</button
+          ></li
         >`
       }
     )
@@ -380,7 +391,17 @@ export class DatePicker extends LitElement {
       (day) => day,
       (day) => {
         return html`<li class="day"
-          ><button class="nextmonth">${day + 1}</button></li
+          ><button
+            class="nextmonth"
+            @click="${() => {
+              this.handleSelectDay({
+                month: this.date.getMonth() + 1,
+                day: day + 1,
+              })
+              this.handleChangeCalendarMonth('next')()
+            }}"
+            >${day + 1}</button
+          ></li
         >`
       }
     )
