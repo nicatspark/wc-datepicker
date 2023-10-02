@@ -12,10 +12,6 @@ export declare class DatePicker extends LitElement {
     selectedDate: Date | undefined;
     date: Date;
     locale: string;
-    /**
-     * The number of times the button has been clicked.
-     */
-    count: number;
     willUpdate(changedProperties: PropertyValues<this>): void;
     render(): import("lit-html").TemplateResult<1>;
     private handleSelectDay;

@@ -135,12 +135,6 @@ export class DatePicker extends LitElement {
   @property({ reflect: true })
   locale = 'en-US'
 
-  /**
-   * The number of times the button has been clicked.
-   */
-  @property({ type: Number })
-  count = 0
-
   override willUpdate(changedProperties: PropertyValues<this>) {
     // only need to check changed properties for an expensive computation.
     if (changedProperties.has('date')) {
@@ -285,6 +279,16 @@ export class DatePicker extends LitElement {
           (day) => day,
           (day) => {
             return html`<li
+              aria-label="Choose ${new Date(
+                this.date.getFullYear(),
+                this.date.getMonth(),
+                day
+              ).toLocaleDateString(this.locale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}"
               class="day${this.selectedDate?.getTime() ===
               new Date(
                 this.date.getFullYear(),

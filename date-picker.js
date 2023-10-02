@@ -21,10 +21,6 @@ let DatePicker = class DatePicker extends LitElement {
         this.selectedDate = undefined;
         this.date = new Date();
         this.locale = 'en-US';
-        /**
-         * The number of times the button has been clicked.
-         */
-        this.count = 0;
         // private _onClick() {
         //   this.count++
         //   this.dispatchEvent(new CustomEvent('count-changed'))
@@ -160,6 +156,12 @@ let DatePicker = class DatePicker extends LitElement {
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
             var _a;
             return html `<li
+              aria-label="Choose ${new Date(this.date.getFullYear(), this.date.getMonth(), day).toLocaleDateString(this.locale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+            })}"
               class="day${((_a = this.selectedDate) === null || _a === void 0 ? void 0 : _a.getTime()) ===
                 new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime()
                 ? ' selected'
@@ -351,9 +353,6 @@ __decorate([
 __decorate([
     property({ reflect: true })
 ], DatePicker.prototype, "locale", void 0);
-__decorate([
-    property({ type: Number })
-], DatePicker.prototype, "count", void 0);
 DatePicker = __decorate([
     customElement('date-picker')
 ], DatePicker);
