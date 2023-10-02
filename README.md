@@ -1,10 +1,14 @@
-# LitElement TypeScript starter
+# Web Components Date Picker
 
-This project includes a sample component using LitElement with TypeScript.
+This project aims to provide a framework agnostic Date Picker component without dependencies. It is still Work In Progress.
 
-This template is generated from the `lit-starter-ts` package in [the main Lit
-repo](https://github.com/lit/lit). Issues and PRs for this template should be
-filed in that repo.
+To start developing run:
+
+```bash
+npm run build:watch && npm run serve
+```
+
+Contact: <nicolas@hervy.se>
 
 ## Setup
 
