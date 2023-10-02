@@ -156,20 +156,22 @@ let DatePicker = class DatePicker extends LitElement {
         ${repeat(Array.from({ length: this.numberOfDays }, (_, i) => i + 1), (day) => day, (day) => {
             var _a;
             return html `<li
-              aria-label="Choose ${new Date(this.date.getFullYear(), this.date.getMonth(), day).toLocaleDateString(this.locale, {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-            })}"
-              class="day${((_a = this.selectedDate) === null || _a === void 0 ? void 0 : _a.getTime()) ===
+              ><button
+                class="day${((_a = this.selectedDate) === null || _a === void 0 ? void 0 : _a.getTime()) ===
                 new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime()
                 ? ' selected'
                 : ''}${new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime() === new Date().setHours(0, 0, 0, 0)
                 ? ' today'
                 : ''}"
-              @click="${() => this.handleSelectDay(day)}"
-              >${day}</li
+                aria-label="Choose ${new Date(this.date.getFullYear(), this.date.getMonth(), day).toLocaleDateString(this.locale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+            })}"
+                @click="${() => this.handleSelectDay(day)}"
+                >${day}</button
+              ></li
             >`;
         })}
         <!-- next month -->
@@ -192,7 +194,9 @@ let DatePicker = class DatePicker extends LitElement {
                 1 +
                 i);
         }), (day) => day, (day) => {
-            return html `<li class="day prevmonth">${day}</li>`;
+            return html `<li class="day "
+          ><button class="prevmonth">${day}</button></li
+        >`;
         });
     }
     getCalendarRemaningDays() {
@@ -203,7 +207,9 @@ let DatePicker = class DatePicker extends LitElement {
             length: 7 -
                 new Date(this.date.getFullYear(), this.date.getMonth(), this.numberOfDays + 1).getDay(),
         }, (_, i) => i), (day) => day, (day) => {
-            return html `<li class="day nextmonth">${day + 1}</li>`;
+            return html `<li class="day"
+          ><button class="nextmonth">${day + 1}</button></li
+        >`;
         });
     }
     calendarMonthStartsOn({ year = this.date.getFullYear(), month = this.date.getMonth(), } = {}) {
@@ -283,13 +289,19 @@ DatePicker.styles = css `
         color: var(--weekday-fg);
       }
     .calendar > li {
+      outline: solid 1px var(--day-outline);
+      background-color: #fff;
+      
+      & button {
         aspect-ratio: 1;
-        outline: solid 1px var(--day-outline);
-        background-color: #fff;
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
         display: grid;
         place-items: center;
         font-size: 1.2em;
         cursor: pointer;
+        width: 100%;
         &.today {
           background-color: var(--today);
           color: var(--today-fg);
@@ -305,6 +317,7 @@ DatePicker.styles = css `
           background-color: var(--hover-bg);
         }
       }
+    }
       .calendar-head {
         display: grid;
         grid-template-columns: min-content auto min-content;

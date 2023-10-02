@@ -64,13 +64,19 @@ export class DatePicker extends LitElement {
         color: var(--weekday-fg);
       }
     .calendar > li {
+      outline: solid 1px var(--day-outline);
+      background-color: #fff;
+      
+      & button {
         aspect-ratio: 1;
-        outline: solid 1px var(--day-outline);
-        background-color: #fff;
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
         display: grid;
         place-items: center;
         font-size: 1.2em;
         cursor: pointer;
+        width: 100%;
         &.today {
           background-color: var(--today);
           color: var(--today-fg);
@@ -86,6 +92,7 @@ export class DatePicker extends LitElement {
           background-color: var(--hover-bg);
         }
       }
+    }
       .calendar-head {
         display: grid;
         grid-template-columns: min-content auto min-content;
@@ -279,32 +286,34 @@ export class DatePicker extends LitElement {
           (day) => day,
           (day) => {
             return html`<li
-              aria-label="Choose ${new Date(
-                this.date.getFullYear(),
-                this.date.getMonth(),
-                day
-              ).toLocaleDateString(this.locale, {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}"
-              class="day${this.selectedDate?.getTime() ===
-              new Date(
-                this.date.getFullYear(),
-                this.date.getMonth(),
-                day
-              ).getTime()
-                ? ' selected'
-                : ''}${new Date(
-                this.date.getFullYear(),
-                this.date.getMonth(),
-                day
-              ).getTime() === new Date().setHours(0, 0, 0, 0)
-                ? ' today'
-                : ''}"
-              @click="${() => this.handleSelectDay(day)}"
-              >${day}</li
+              ><button
+                class="day${this.selectedDate?.getTime() ===
+                new Date(
+                  this.date.getFullYear(),
+                  this.date.getMonth(),
+                  day
+                ).getTime()
+                  ? ' selected'
+                  : ''}${new Date(
+                  this.date.getFullYear(),
+                  this.date.getMonth(),
+                  day
+                ).getTime() === new Date().setHours(0, 0, 0, 0)
+                  ? ' today'
+                  : ''}"
+                aria-label="Choose ${new Date(
+                  this.date.getFullYear(),
+                  this.date.getMonth(),
+                  day
+                ).toLocaleDateString(this.locale, {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}"
+                @click="${() => this.handleSelectDay(day)}"
+                >${day}</button
+              ></li
             >`
           }
         )}
@@ -344,7 +353,9 @@ export class DatePicker extends LitElement {
       ),
       (day) => day,
       (day) => {
-        return html`<li class="day prevmonth">${day}</li>`
+        return html`<li class="day "
+          ><button class="prevmonth">${day}</button></li
+        >`
       }
     )
   }
@@ -368,7 +379,9 @@ export class DatePicker extends LitElement {
       ),
       (day) => day,
       (day) => {
-        return html`<li class="day nextmonth">${day + 1}</li>`
+        return html`<li class="day"
+          ><button class="nextmonth">${day + 1}</button></li
+        >`
       }
     )
   }
