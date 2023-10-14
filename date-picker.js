@@ -52,6 +52,12 @@ let DatePicker = class DatePicker extends LitElement {
         });
     }
     willUpdate(changedProperties) {
+        if (changedProperties.has('locale')) {
+            this.date = new Date(this.date.toLocaleString(this.locale));
+        }
+        if (changedProperties.has('range')) {
+            this.style.setProperty('--max-width', this.range ? '43em' : '21em');
+        }
         if (changedProperties.has('date')) {
             this.datePlusOneMonth = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
         }
@@ -97,11 +103,12 @@ DatePicker.styles = css `
       --button-control-fg-hover: #000;
       --weekday-fg: #999;
       --calendar-padding: 16px;
+      --max-width: 21em;
       position: relative;
       display: block;
       border: solid 1px gray;
       padding: var(--calendar-padding);
-      max-width: 43em;
+      max-width: var(--max-width);
       font-size: 0.7rem;
       font-family: Helvetica, sans-serif;
       box-sizing: border-box;
