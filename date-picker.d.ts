@@ -1,4 +1,5 @@
 import { LitElement, PropertyValues } from 'lit';
+import './datepicker-calendar';
 /**
  * A Date-Picker.
  *
@@ -7,20 +8,16 @@ import { LitElement, PropertyValues } from 'lit';
  */
 export declare class DatePicker extends LitElement {
     static styles: import("lit").CSSResult;
-    numberOfDays: number;
-    numberOfDaysLastMonth: number;
-    selectedDate: Date | undefined;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
     date: Date;
+    datePlusOneMonth: Date;
+    range: boolean;
     locale: string;
     willUpdate(changedProperties: PropertyValues<this>): void;
     render(): import("lit-html").TemplateResult<1>;
-    private handleSelectDay;
-    private getCalendarPreMonthDays;
-    private getCalendarRemaningDays;
-    private calendarMonthStartsOn;
     private handleChangeCalendarMonth;
     private handleChangeCalendarYear;
-    private getCalendarStartDay;
 }
 declare global {
     interface HTMLElementTagNameMap {
