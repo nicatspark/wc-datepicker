@@ -16,10 +16,7 @@ export class DatePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback()
-    this.addEventListener('update-calendar-view', (e) => {
-      console.log('first', (e as CustomEvent).detail.month)
-      this.handleChangeCalendarView((e as CustomEvent).detail)
-    })
+    this.addEventListener('update-calendar-view', this._eventHandler)
     this.addEventListener('selected-date-changed', (e) => {
       this.selectedDate = (e as CustomEvent).detail
       if (this.range) {
@@ -29,15 +26,21 @@ export class DatePicker extends LitElement {
       }
     })
   }
+
   override disconnectedCallback() {
     super.disconnectedCallback()
-    this.removeEventListener('update-calendar-view', (e) => {
-      this.handleChangeCalendarView((e as CustomEvent).detail.month)
-    })
+    this.removeEventListener('update-calendar-view', this._eventHandler)
     this.removeEventListener('selected-date-changed', (e) => {
       this.selectedDate = (e as CustomEvent).detail
     })
   }
+
+  private _eventHandler = (e: Event) => {
+    this.handleChangeCalendarView((e as CustomEvent).detail)
+  }
+
+  @property({ reflect: true })
+  locale = 'en-US'
 
   @state()
   selectedDate: Date | undefined = undefined
@@ -49,20 +52,17 @@ export class DatePicker extends LitElement {
   private _date = new Date('')
 
   @property({ type: String, reflect: true })
-  date = ''
+  date = new Date().toLocaleString(this.locale)
 
   @state()
   datePlusOneMonth = new Date(
-    this._date.getFullYear(),
-    this._date.getMonth() + 1,
+    new Date(this.date).getFullYear(),
+    new Date(this.date).getMonth() + 1,
     1
   )
 
   @property({ type: Boolean })
   range = false
-
-  @property({ reflect: true })
-  locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     console.log('changedProperties', changedProperties)

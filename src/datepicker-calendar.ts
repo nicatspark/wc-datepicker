@@ -88,6 +88,8 @@ export class DatepickerCalendar extends LitElement {
             : ''}"
         >
           <button
+            aria-label="Previous month"
+            title="Previous month"
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
@@ -113,6 +115,8 @@ export class DatepickerCalendar extends LitElement {
             ></div>
           </button>
           <button
+            aria-label="Previous year"
+            title="Previous year"
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
@@ -149,6 +153,8 @@ export class DatepickerCalendar extends LitElement {
             : ''}"
         >
           <button
+            aria-label="Next year"
+            title="Next year"
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
@@ -174,6 +180,8 @@ export class DatepickerCalendar extends LitElement {
             ></div>
           </button>
           <button
+            aria-label="Next month"
+            title="Next month"
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
