@@ -66,6 +66,7 @@ export class DatePicker extends LitElement {
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     console.log('changedProperties', changedProperties)
+    //TODO: Use this.date instead of this._date
     if (changedProperties.has('_date')) {
       this.datePlusOneMonth = new Date(
         this._date.getFullYear(),
