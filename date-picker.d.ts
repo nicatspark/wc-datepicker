@@ -10,6 +10,7 @@ export declare class DatePicker extends LitElement {
     static styles: import("lit").CSSResult;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    selectedDate: Date | undefined;
     date: Date;
     datePlusOneMonth: Date;
     range: boolean;

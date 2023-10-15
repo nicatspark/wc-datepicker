@@ -4,9 +4,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { styles } from './datepicker-calendar.css';
 /**
  * A Datepicker-calendar.
  *
@@ -30,6 +31,14 @@ let DatepickerCalendar = class DatepickerCalendar extends LitElement {
          * Formats a greeting
          * @param name The name to say "Hello" to
          */
+    }
+    static get observedAttributes() {
+        return ['selected-date'];
+    }
+    attributeChangedCallback(name, oldVal, newVal) {
+        if (name === 'selected-date' && oldVal !== newVal) {
+            this.selectedDate = new Date(newVal);
+        }
     }
     willUpdate(changedProperties) {
         // only need to check changed properties for an expensive computation.
@@ -199,8 +208,11 @@ let DatepickerCalendar = class DatepickerCalendar extends LitElement {
     `;
     }
     handleSelectDay({ year = this.date.getFullYear(), month = this.date.getMonth(), day, }) {
-        this.selectedDate = new Date(year, month, day);
-        this.dispatchEvent(new CustomEvent('selected-date-changed', { detail: this.selectedDate }));
+        // this.selectedDate = new Date(year, month, day)
+        this.dispatchEvent(new CustomEvent('selected-date-changed', {
+            detail: new Date(year, month, day),
+            composed: true,
+        }));
     }
     getCalendarPreMonthDays() {
         return repeat(Array.from({
@@ -257,94 +269,7 @@ let DatepickerCalendar = class DatepickerCalendar extends LitElement {
         }) */
     }
 };
-DatepickerCalendar.styles = css `
-    :host {
-      display: block;
-      box-sizing: inherit;
-      width: 100%;
-    }
-    :host([hidden]) {
-      display: none !important;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0em;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .weekdays > li {
-      display: grid;
-      place-items: center;
-      margin-block: 1em 0.5em;
-      font-weight: bold;
-      color: var(--weekday-fg);
-    }
-    .calendar > li {
-      outline: solid 1px var(--day-outline);
-      background-color: #fff;
-
-      & button {
-        aspect-ratio: 1;
-        background-color: transparent;
-        border: 0;
-        border-radius: 0;
-        display: grid;
-        place-items: center;
-        font-size: 1.2em;
-        cursor: pointer;
-        width: 100%;
-        &.today {
-          background-color: var(--today);
-          color: var(--today-fg);
-        }
-        &.selected {
-          background-color: var(--selected-bg);
-          color: var(--selected-fg);
-        }
-        &.prevmonth,
-        &.nextmonth {
-          color: var(--other-month-fg);
-        }
-        &:not(.selected):hover {
-          background-color: var(--hover-bg);
-        }
-      }
-    }
-
-    .calendar-head {
-      display: grid;
-      grid-template-columns: min-content auto min-content;
-      gap: 0em;
-      padding: 0;
-      margin: 0;
-      font-size: 1.2em;
-      & .calendar-head__controls {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      & h4 {
-        text-align: center;
-        margin: 0;
-        padding: 0;
-      }
-      & button {
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        color: var(--button-control-fg);
-        & > div {
-          width: 1em;
-          height: 1em;
-        }
-        &:hover {
-          color: var(--button-control-fg-hover);
-        }
-      }
-    }
-  `;
+DatepickerCalendar.styles = styles;
 __decorate([
     state()
 ], DatepickerCalendar.prototype, "numberOfDays", void 0);
@@ -352,7 +277,7 @@ __decorate([
     state()
 ], DatepickerCalendar.prototype, "numberOfDaysLastMonth", void 0);
 __decorate([
-    state()
+    property()
 ], DatepickerCalendar.prototype, "selectedDate", void 0);
 __decorate([
     property({ type: Number })

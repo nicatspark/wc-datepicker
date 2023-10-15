@@ -1,6 +1,7 @@
-import { LitElement, html, css, PropertyValues } from 'lit'
+import { LitElement, html, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import './datepicker-calendar'
+import { styles } from './date-picker.css'
 
 /**
  * A Date-Picker.
@@ -10,53 +11,7 @@ import './datepicker-calendar'
  */
 @customElement('date-picker')
 export class DatePicker extends LitElement {
-  static override styles = css`
-    :host {
-      --selected-bg: rgb(15, 88, 214);
-      --selected-fg: #fff;
-      --today: #eee;
-      --today-fg: #000;
-      --other-month-fg: #999;
-      --hover-bg: #def;
-      --day-outline: #ccc;
-      --button-control-fg: #333;
-      --button-control-fg-hover: #000;
-      --weekday-fg: #999;
-      --calendar-padding: 16px;
-      --max-width: 21em;
-      position: relative;
-      display: block;
-      border: solid 1px gray;
-      padding: var(--calendar-padding);
-      max-width: var(--max-width);
-      font-size: 0.7rem;
-      font-family: Helvetica, sans-serif;
-      box-sizing: border-box;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    }
-    .triangle {
-      display: block;
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      border-bottom-color: #fff;
-      border-top: 0;
-      margin-left: -10px;
-    }
-    :host([hidden]) {
-      display: none !important;
-    }
-    .calendar-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: var(--calendar-padding);
-    }
-  `
+  static override styles = styles
 
   override connectedCallback() {
     super.connectedCallback()
@@ -71,6 +26,9 @@ export class DatePicker extends LitElement {
     })
     this.addEventListener('prev-year', () => {
       this.handleChangeCalendarYear('prev')
+    })
+    this.addEventListener('selected-date-changed', (e) => {
+      this.selectedDate = (e as CustomEvent).detail
     })
   }
   override disconnectedCallback() {
@@ -87,7 +45,13 @@ export class DatePicker extends LitElement {
     this.removeEventListener('prev-year', () => {
       this.handleChangeCalendarYear('prev')
     })
+    this.removeEventListener('selected-date-changed', (e) => {
+      this.selectedDate = (e as CustomEvent).detail
+    })
   }
+
+  @state()
+  selectedDate: Date | undefined = undefined
 
   @property({ type: Object })
   date = new Date()
@@ -125,15 +89,19 @@ export class DatePicker extends LitElement {
     return html`
       <div class="calendar-container">
         <datepicker-calendar
+          class="start"
           .date="${this.date}"
           locale="${this.locale}"
           ?range="${this.range}"
+          selected-date="${this.selectedDate}"
         ></datepicker-calendar>
         <datepicker-calendar
+          class="end"
           ?hidden="${!this.range}"
           .date="${this.datePlusOneMonth}"
           locale="${this.locale}"
           range="true"
+          selected-date="${this.selectedDate}"
         ></datepicker-calendar>
       </div>
       <slot></slot>

@@ -7,6 +7,8 @@ import { LitElement, PropertyValues } from 'lit';
  */
 export declare class DatepickerCalendar extends LitElement {
     static styles: import("lit").CSSResult;
+    static get observedAttributes(): string[];
+    attributeChangedCallback(name: string, oldVal: string, newVal: string): void;
     numberOfDays: number;
     numberOfDaysLastMonth: number;
     selectedDate: Date | undefined;
