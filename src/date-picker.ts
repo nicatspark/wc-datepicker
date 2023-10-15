@@ -66,21 +66,19 @@ export class DatePicker extends LitElement {
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     console.log('changedProperties', changedProperties)
-    //TODO: Use this.date instead of this._date
-    if (changedProperties.has('_date')) {
+    // if (changedProperties.has('_date')) {
+    //   this.datePlusOneMonth = new Date(
+    //     this._date.getFullYear(),
+    //     this._date.getMonth() + 1,
+    //     1
+    //   )
+    // }
+    if (changedProperties.has('date')) {
       this.datePlusOneMonth = new Date(
-        this._date.getFullYear(),
-        this._date.getMonth() + 1,
+        new Date(this.date).getFullYear(),
+        new Date(this.date).getMonth() + 1,
         1
       )
-    }
-    if (changedProperties.has('date')) {
-      // this.datePlusOneMonth = new Date(
-      //   new Date(this.date).getFullYear(),
-      //   new Date(this.date).getMonth() + 1,
-      //   1
-      // );
-      console.log('this.date', new Date(this.date).getFullYear())
       if (new Date(this.date).getFullYear() === 2023)
         console.log('%c Error date', 'color: red')
       this._date = new Date(this.date)
@@ -131,11 +129,9 @@ export class DatePicker extends LitElement {
     month?: number
     year?: number
   }) {
-    this._date = new Date(
-      this._date.getFullYear() + (year ?? 0),
-      this._date.getMonth() + (month ?? 0),
-      1
-    )
+    this.date = `${this._date.getFullYear() + (year ?? 0)}-${
+      this._date.getMonth() + (month ?? 0) + 1
+    }`
   }
 }
 
