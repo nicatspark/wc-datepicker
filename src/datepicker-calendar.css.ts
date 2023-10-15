@@ -87,6 +87,10 @@ const styles = css`
       }
     }
   }
+  .hide {
+    visibility: hidden;
+    pointer-events: none;
+  }
 `
 
 export { styles }

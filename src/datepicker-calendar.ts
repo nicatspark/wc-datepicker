@@ -1,4 +1,4 @@
-import { LitElement, html, PropertyValues } from 'lit'
+import { LitElement, html, PropertyValues, PropertyValueMap } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { styles } from './datepicker-calendar.css'
@@ -36,17 +36,27 @@ export class DatepickerCalendar extends LitElement {
   @property()
   selectedDate: Date | undefined = undefined
 
+  @property({ type: Boolean })
+  range = false
+
+  @state()
+  selectedDateRange: [Date | null, Date | null] = [null, null]
+
   @property({ type: Number })
   firstDayOfWeek = 0
 
-  @property({ type: Object })
+  @property({ type: Date })
   date = new Date()
 
   @property({ reflect: true })
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
+    console.log('changedProperties', changedProperties)
     // only need to check changed properties for an expensive computation.
+    if (changedProperties.has('selectedDateRange')) {
+      console.log('dateRange updated!!!', this.selectedDateRange)
+    }
     if (changedProperties.has('date')) {
       // Check that this.date is a date object
       if (!(this.date instanceof Date)) {
@@ -71,10 +81,14 @@ export class DatepickerCalendar extends LitElement {
   override render() {
     return html`
       <div class="calendar-head">
-        <div class="calendar-head__controls">
+        <div
+          class="calendar-head__controls${this.range &&
+          this.classList.contains('end')
+            ? ' hide'
+            : ''}"
+        >
           <button
             @click="${() => {
-              console.log('clicked')
               this.dispatchEvent(
                 new Event('prev-month', { bubbles: true, composed: true })
               )
@@ -119,7 +133,12 @@ export class DatepickerCalendar extends LitElement {
           ${this.date.toLocaleString(this.locale, { month: 'long' })}
           ${this.date.getFullYear()}
         </h4>
-        <div class="calendar-head__controls">
+        <div
+          class="calendar-head__controls${this.range &&
+          this.classList.contains('start')
+            ? ' hide'
+            : ''}"
+        >
           <button
             @click="${() =>
               this.dispatchEvent(
