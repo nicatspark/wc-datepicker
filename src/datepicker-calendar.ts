@@ -52,11 +52,11 @@ export class DatepickerCalendar extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    console.log('changedProperties', changedProperties)
+    // console.log('changedProperties', changedProperties)
     // only need to check changed properties for an expensive computation.
-    if (changedProperties.has('selectedDateRange')) {
-      console.log('dateRange updated!!!', this.selectedDateRange)
-    }
+    // if (changedProperties.has('selectedDateRange')) {
+    //   console.log('dateRange updated!!!', this.selectedDateRange)
+    // }
     if (changedProperties.has('date')) {
       // Check that this.date is a date object
       if (!(this.date instanceof Date)) {
@@ -90,7 +90,11 @@ export class DatepickerCalendar extends LitElement {
           <button
             @click="${() => {
               this.dispatchEvent(
-                new Event('prev-month', { bubbles: true, composed: true })
+                new CustomEvent('update-calendar-view', {
+                  detail: { month: -1 },
+                  bubbles: true,
+                  composed: true,
+                })
               )
             }}"
           >
@@ -109,10 +113,15 @@ export class DatepickerCalendar extends LitElement {
             ></div>
           </button>
           <button
-            @click="${() =>
+            @click="${() => {
               this.dispatchEvent(
-                new Event('prev-year', { bubbles: true, composed: true })
-              )}"
+                new CustomEvent('update-calendar-view', {
+                  detail: { year: -1 },
+                  bubbles: true,
+                  composed: true,
+                })
+              )
+            }}"
           >
             <div aria-hidden="true" data-comp="icon"
               ><svg
@@ -140,10 +149,15 @@ export class DatepickerCalendar extends LitElement {
             : ''}"
         >
           <button
-            @click="${() =>
+            @click="${() => {
               this.dispatchEvent(
-                new Event('next-year', { bubbles: true, composed: true })
-              )}"
+                new CustomEvent('update-calendar-view', {
+                  detail: { year: 1 },
+                  bubbles: true,
+                  composed: true,
+                })
+              )
+            }}"
           >
             <div aria-hidden="true" data-comp="icon"
               ><svg
@@ -160,10 +174,15 @@ export class DatepickerCalendar extends LitElement {
             ></div>
           </button>
           <button
-            @click="${() =>
+            @click="${() => {
               this.dispatchEvent(
-                new Event('next-month', { bubbles: true, composed: true })
-              )}"
+                new CustomEvent('update-calendar-view', {
+                  detail: { month: 1 },
+                  bubbles: true,
+                  composed: true,
+                })
+              )
+            }}"
           >
             <div aria-hidden="true" data-comp="icon"
               ><svg
@@ -315,7 +334,11 @@ export class DatepickerCalendar extends LitElement {
             @click="${() => {
               this.handleSelectDay({ month: this.date.getMonth() - 1, day })
               this.dispatchEvent(
-                new Event('prev-month', { bubbles: true, composed: true })
+                new CustomEvent('update-calendar-view', {
+                  detail: { month: -1 },
+                  bubbles: true,
+                  composed: true,
+                })
               )
             }}"
             >${day}</button
@@ -353,7 +376,11 @@ export class DatepickerCalendar extends LitElement {
                 day: day + 1,
               })
               this.dispatchEvent(
-                new Event('next-month', { bubbles: true, composed: true })
+                new CustomEvent('update-calendar-view', {
+                  detail: { month: 1 },
+                  bubbles: true,
+                  composed: true,
+                })
               )
             }}"
             >${day + 1}</button

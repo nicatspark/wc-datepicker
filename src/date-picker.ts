@@ -1,7 +1,8 @@
-import { LitElement, html, PropertyValues, PropertyValueMap } from 'lit'
+import { LitElement, html, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import './datepicker-calendar'
 import { styles } from './date-picker.css'
+import { directive } from 'lit/directive.js'
 
 /**
  * A Date-Picker.
@@ -15,17 +16,9 @@ export class DatePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback()
-    this.addEventListener('next-year', () => {
-      this.handleChangeCalendarYear('next')
-    })
-    this.addEventListener('next-month', () => {
-      this.handleChangeCalendarMonth('next')
-    })
-    this.addEventListener('prev-month', () => {
-      this.handleChangeCalendarMonth('prev')
-    })
-    this.addEventListener('prev-year', () => {
-      this.handleChangeCalendarYear('prev')
+    this.addEventListener('update-calendar-view', (e) => {
+      console.log('first', (e as CustomEvent).detail.month)
+      this.handleChangeCalendarView((e as CustomEvent).detail)
     })
     this.addEventListener('selected-date-changed', (e) => {
       this.selectedDate = (e as CustomEvent).detail
@@ -38,17 +31,8 @@ export class DatePicker extends LitElement {
   }
   override disconnectedCallback() {
     super.disconnectedCallback()
-    this.removeEventListener('next-year', () => {
-      this.handleChangeCalendarYear('next')
-    })
-    this.removeEventListener('next-month', () => {
-      this.handleChangeCalendarMonth('next')
-    })
-    this.removeEventListener('prev-month', () => {
-      this.handleChangeCalendarMonth('prev')
-    })
-    this.removeEventListener('prev-year', () => {
-      this.handleChangeCalendarYear('prev')
+    this.removeEventListener('update-calendar-view', (e) => {
+      this.handleChangeCalendarView((e as CustomEvent).detail.month)
     })
     this.removeEventListener('selected-date-changed', (e) => {
       this.selectedDate = (e as CustomEvent).detail
@@ -61,10 +45,11 @@ export class DatePicker extends LitElement {
   @state()
   selectedDateRange: [Date | null, Date | null] = [null, null]
 
-  private _date = new Date('1971')
+  @state()
+  private _date = new Date('')
 
-  @property({ type: String })
-  date = '1991'
+  @property({ type: String, reflect: true })
+  date = ''
 
   @state()
   datePlusOneMonth = new Date(
@@ -80,7 +65,20 @@ export class DatePicker extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
+    console.log('changedProperties', changedProperties)
+    if (changedProperties.has('_date')) {
+      this.datePlusOneMonth = new Date(
+        this._date.getFullYear(),
+        this._date.getMonth() + 1,
+        1
+      )
+    }
     if (changedProperties.has('date')) {
+      // this.datePlusOneMonth = new Date(
+      //   new Date(this.date).getFullYear(),
+      //   new Date(this.date).getMonth() + 1,
+      //   1
+      // );
       console.log('this.date', new Date(this.date).getFullYear())
       if (new Date(this.date).getFullYear() === 2023)
         console.log('%c Error date', 'color: red')
@@ -104,7 +102,7 @@ export class DatePicker extends LitElement {
       <div class="calendar-container">
         <datepicker-calendar
           class="start"
-          .date="${this._date}"
+          .date=${this._date}
           locale="${this.locale}"
           .range=${this.range}
           selected-date="${this.selectedDate}"
@@ -112,8 +110,8 @@ export class DatePicker extends LitElement {
         ></datepicker-calendar>
         <datepicker-calendar
           class="end"
-          ?hidden="${!this.range}"
-          .date="${this.datePlusOneMonth}"
+          ?hidden=${!this.range}
+          .date=${this.datePlusOneMonth}
           locale="${this.locale}"
           .range=${true}
           selected-date="${this.selectedDate}"
@@ -125,20 +123,16 @@ export class DatePicker extends LitElement {
     `
   }
 
-  private handleChangeCalendarMonth(direction: 'prev' | 'next') {
-    const dir = direction === 'prev' ? -1 : 1
+  private handleChangeCalendarView({
+    month,
+    year,
+  }: {
+    month?: number
+    year?: number
+  }) {
     this._date = new Date(
-      this._date.getFullYear(),
-      this._date.getMonth() + dir,
-      1
-    )
-  }
-
-  private handleChangeCalendarYear(direction: 'prev' | 'next') {
-    const dir = direction === 'prev' ? -1 : 1
-    this._date = new Date(
-      this._date.getFullYear() + dir,
-      this._date.getMonth(),
+      this._date.getFullYear() + (year ?? 0),
+      this._date.getMonth() + (month ?? 0),
       1
     )
   }
