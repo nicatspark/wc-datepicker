@@ -274,20 +274,7 @@ export class DatepickerCalendar extends LitElement {
           (day) => {
             return html`<li
               ><button
-                class="day${this.selectedDate?.getTime() ===
-                new Date(
-                  this.date.getFullYear(),
-                  this.date.getMonth(),
-                  day
-                ).getTime()
-                  ? ' selected'
-                  : ''}${new Date(
-                  this.date.getFullYear(),
-                  this.date.getMonth(),
-                  day
-                ).getTime() === new Date().setHours(0, 0, 0, 0)
-                  ? ' today'
-                  : ''}"
+                class="day ${this.getDayState(day)}"
                 aria-label="Choose ${new Date(
                   this.date.getFullYear(),
                   this.date.getMonth(),
@@ -310,6 +297,35 @@ export class DatepickerCalendar extends LitElement {
       <slot></slot>
       <div class="triangle"></div>
     `
+  }
+
+  private getDayState(day: number) {
+    const classList = []
+    const currentDay = new Date(
+      this.date.getFullYear(),
+      this.date.getMonth(),
+      day
+    ).getTime()
+
+    // is range selected
+    if (this.selectedDateRange.start) {
+      if (this.selectedDateRange.start.getTime() === currentDay)
+        classList.push('selected selected-start')
+      if (this.selectedDateRange.end?.getTime() === currentDay)
+        classList.push('selected selected-end')
+    }
+    // is single date selected
+    if (!this.range && this.selectedDate?.getTime() === currentDay)
+      classList.push('selected')
+
+    // is today
+    if (
+      new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime() ===
+      new Date().setHours(0, 0, 0, 0)
+    )
+      classList.push('today')
+
+    return classList.join(' ')
   }
 
   private handleSelectDay({
