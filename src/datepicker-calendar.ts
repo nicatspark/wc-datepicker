@@ -154,7 +154,7 @@ export class DatepickerCalendar extends LitElement {
           </button>
         </div>
         <h4>
-          ${this.date.toLocaleString(this.locale, { month: 'long' })}
+          ${this.date.toLocaleString(this.locale, { month: 'short' })}
           ${this.date.getFullYear()}
         </h4>
         <div

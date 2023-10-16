@@ -2,16 +2,18 @@ import { css } from 'lit'
 
 const styles = css`
   :host {
+    --black: #323232;
     --selected-bg: rgb(15, 88, 214);
     --selected-fg: #fff;
     --in-range-bg: #def;
     --today: #eee;
-    --today-fg: #000;
+    --today-fg: var(--black);
+    --title-fg: var(--black);
     --other-month-fg: #999;
     --hover-bg: #def;
-    --day-outline: #ccc;
+    --border-color: #ddd;
     --button-control-fg: #333;
-    --button-control-fg-hover: #000;
+    --button-control-fg-hover: var(--black);
     --weekday-fg: #999;
     --calendar-padding: 16px;
     --max-width: 21em;

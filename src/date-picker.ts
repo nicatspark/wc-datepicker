@@ -49,7 +49,7 @@ export class DatePicker extends LitElement {
       const bothDateSet = previousRange.start && previousRange.end
       if (bothDateSet || endDateBeforeStartDate) {
         this.selectedDateRange = {
-          start: null,
+          start: this.selectedDate || null,
           end: null,
         }
       } else {
@@ -60,6 +60,22 @@ export class DatePicker extends LitElement {
           ...previousRange,
           ...updateObj,
         }
+      }
+      if (this.selectedDateRange.start && this.selectedDateRange.end) {
+        const diffTime = Math.abs(
+          this.selectedDateRange.end.getTime() -
+            this.selectedDateRange.start.getTime()
+        )
+        const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1
+        this.dispatchEvent(
+          new CustomEvent('selected-date-range-changed', {
+            detail: {
+              ...this.selectedDateRange,
+              days,
+            },
+            composed: true,
+          })
+        )
       }
       // TODO: This should not be neccessary
       if (calendarEl?.length) {

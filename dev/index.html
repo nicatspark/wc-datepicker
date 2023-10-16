@@ -19,7 +19,8 @@
         );
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
-      h1 {
+      h1,
+      h4 {
         color: rgb(15, 88, 214);
         margin-block-start: 2rem;
         text-align: center;
@@ -40,7 +41,7 @@
         }
         myElement.addEventListener('selected-date-changed', (e) => {
           const selectedDay = document.querySelector('#selectedday')
-          selectedDay.innerHTML = e.detail.toLocaleDateString('en-us', options)
+          selectedDay.innerText = e.detail.toLocaleDateString('en-us', options)
           Object.assign(selectedDay.style, {
             opacity: 0,
             transition: 'none',
@@ -52,13 +53,33 @@
             })
           })
         })
+        myElement.addEventListener('selected-date-range-changed', (e) => {
+          const selectedDateRange = document.querySelector('#selected-range')
+          selectedDateRange.innerHTML = `{ ${e.detail.start.toLocaleDateString(
+            'en-us',
+            options
+          )} – ${e.detail.end.toLocaleDateString(
+            'en-us',
+            options
+          )} }<br>Days: ${e.detail.days}`
+          Object.assign(selectedDateRange.style, {
+            opacity: 0,
+            transition: 'none',
+          })
+          setTimeout(() => {
+            Object.assign(selectedDateRange.style, {
+              opacity: 1,
+              transition: 'all 1s ease-in-out',
+            })
+          })
+        })
       }
     </script>
   </head>
   <body>
     <div id="root"
       ><date-picker date="2022,11,02" range></date-picker>
-      <h1 id="selectedday"></h1
+      <h1 id="selectedday"></h1><h4 id="selected-range"></h4
     ></div>
   </body>
 </html>
