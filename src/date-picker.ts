@@ -2,7 +2,11 @@ import { LitElement, html, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import './datepicker-calendar'
 import { styles } from './date-picker.css'
-import { directive } from 'lit/directive.js'
+
+interface DateRange {
+  start: Date | null
+  end: Date | null
+}
 
 /**
  * A Date-Picker.
@@ -16,27 +20,43 @@ export class DatePicker extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback()
-    this.addEventListener('update-calendar-view', this._eventHandler)
-    this.addEventListener('selected-date-changed', (e) => {
-      this.selectedDate = (e as CustomEvent).detail
-      if (this.range) {
-        this.selectedDateRange[this.selectedDateRange[0] ? 1 : 0] = (
-          e as CustomEvent
-        ).detail
-      }
-    })
+    this.addEventListener('update-calendar-view', this._handleCalendarView)
+    this.addEventListener('selected-date-changed', this._handleSelectedDate)
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback()
-    this.removeEventListener('update-calendar-view', this._eventHandler)
-    this.removeEventListener('selected-date-changed', (e) => {
-      this.selectedDate = (e as CustomEvent).detail
-    })
+    this.removeEventListener('update-calendar-view', this._handleCalendarView)
+    this.removeEventListener('selected-date-changed', this._handleSelectedDate)
   }
 
-  private _eventHandler = (e: Event) => {
+  private _handleCalendarView = (e: Event) => {
     this.handleChangeCalendarView((e as CustomEvent).detail)
+  }
+
+  private _handleSelectedDate = (e: Event) => {
+    this.selectedDate = (e as CustomEvent).detail
+    //
+    if (this.range) {
+      const dr = this.selectedDateRange
+      const endDateBeforeStartDate =
+        this.selectedDate && dr.start && this.selectedDate > dr.start
+      const bothDateSet = dr.start && dr.end
+      if (bothDateSet || endDateBeforeStartDate) {
+        this.selectedDateRange = {
+          start: null,
+          end: null,
+        }
+      }
+      const updateObj = dr.start
+        ? { end: (e as CustomEvent).detail }
+        : { start: (e as CustomEvent).detail }
+      this.selectedDateRange = {
+        ...dr,
+        ...updateObj,
+      }
+    }
+    this.requestUpdate()
   }
 
   @property({ reflect: true })
@@ -46,7 +66,10 @@ export class DatePicker extends LitElement {
   selectedDate: Date | undefined = undefined
 
   @state()
-  selectedDateRange: [Date | null, Date | null] = [null, null]
+  selectedDateRange: DateRange = {
+    start: null,
+    end: null,
+  }
 
   @state()
   private _date = new Date('')
@@ -65,7 +88,7 @@ export class DatePicker extends LitElement {
   range = false
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    console.log('changedProperties', changedProperties)
+    // console.log('changedProperties', changedProperties)
     // if (changedProperties.has('_date')) {
     //   this.datePlusOneMonth = new Date(
     //     this._date.getFullYear(),

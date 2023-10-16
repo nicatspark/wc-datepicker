@@ -40,7 +40,10 @@ export class DatepickerCalendar extends LitElement {
   range = false
 
   @state()
-  selectedDateRange: [Date | null, Date | null] = [null, null]
+  selectedDateRange: { start: Date | null; end: Date | null } = {
+    start: null,
+    end: null,
+  }
 
   @property({ type: Number })
   firstDayOfWeek = 0
@@ -52,7 +55,7 @@ export class DatepickerCalendar extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    // console.log('changedProperties', changedProperties)
+    console.log('changedProperties', changedProperties)
     // only need to check changed properties for an expensive computation.
     // if (changedProperties.has('selectedDateRange')) {
     //   console.log('dateRange updated!!!', this.selectedDateRange)
