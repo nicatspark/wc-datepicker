@@ -14,7 +14,7 @@ const styles = css`
     --border-color: #ddd;
     --button-control-fg: #333;
     --button-control-fg-hover: var(--black);
-    --weekday-fg: #999;
+    --weekday-fg: var(--black);
     --calendar-padding: 16px;
     --max-width: 21em;
     position: relative;

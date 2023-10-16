@@ -103,7 +103,7 @@ const styles = css`
       text-align: center;
       margin: 0;
       padding: 0;
-      font-size: 1em;
+      font-size: 1.2em;
       white-space: nowrap;
       color: var(--title-fg);
     }
