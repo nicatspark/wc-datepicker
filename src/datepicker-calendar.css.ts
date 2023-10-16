@@ -12,16 +12,22 @@ const styles = css`
   .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0.4em;
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+  h4 {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+    white-space: nowrap;
   }
   .weekdays > li {
     display: grid;
     place-items: center;
     margin-block: 1em 0.5em;
     font-weight: bold;
+    font-size: 1.2em;
     color: var(--weekday-fg);
   }
   .calendar > li {
@@ -30,7 +36,8 @@ const styles = css`
     border-radius: 0.2em;
 
     & button {
-      aspect-ratio: 1;
+      aspect-ratio: 1.2 / 1;
+      margin-block: 0.4em;
       background-color: transparent;
       border: 0;
       border-radius: 0;
@@ -83,11 +90,13 @@ const styles = css`
       text-align: center;
       margin: 0;
       padding: 0;
+      font-size: 1.2em;
     }
     & button {
       border: none;
       background-color: transparent;
       cursor: pointer;
+      padding: 0.2em;
       color: var(--button-control-fg);
       & > div {
         width: 1em;

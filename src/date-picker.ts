@@ -36,7 +36,7 @@ export class DatePicker extends LitElement {
 
   private _handleSelectedDate = (e: Event) => {
     this.selectedDate = (e as CustomEvent).detail
-    //
+    // range date selection
     if (this.range) {
       const calendarEl = this.shadowRoot?.querySelectorAll(
         'datepicker-calendar'
@@ -45,20 +45,21 @@ export class DatePicker extends LitElement {
       const endDateBeforeStartDate =
         this.selectedDate &&
         previousRange.start &&
-        this.selectedDate > previousRange.start
+        this.selectedDate < previousRange.start
       const bothDateSet = previousRange.start && previousRange.end
       if (bothDateSet || endDateBeforeStartDate) {
         this.selectedDateRange = {
           start: null,
           end: null,
         }
-      }
-      const updateObj = previousRange.start
-        ? { end: (e as CustomEvent).detail }
-        : { start: (e as CustomEvent).detail }
-      this.selectedDateRange = {
-        ...previousRange,
-        ...updateObj,
+      } else {
+        const updateObj = previousRange.start
+          ? { end: (e as CustomEvent).detail }
+          : { start: (e as CustomEvent).detail }
+        this.selectedDateRange = {
+          ...previousRange,
+          ...updateObj,
+        }
       }
       // TODO: This should not be neccessary
       if (calendarEl?.length) {

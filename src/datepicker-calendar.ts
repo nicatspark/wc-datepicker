@@ -219,34 +219,6 @@ export class DatepickerCalendar extends LitElement {
           </button>
         </div>
       </div>
-      <!--p
-        >Days in
-        ${this.date.toLocaleString(this.locale, {
-        month: 'long',
-      })}:
-        ${this.numberOfDays}<br />
-        Previous month had: ${this.numberOfDaysLastMonth} <br />First of the
-        month occurs on a:
-        ${new Date(
-        this.date.getFullYear(),
-        this.date.getMonth(),
-        1
-      ).toLocaleString(this.locale, {
-        weekday: 'long',
-      })}
-        = ${this.calendarMonthStartsOn()}
-        <br />
-        Selected date:
-        <b>
-          ${this.selectedDate
-        ? this.selectedDate?.toLocaleString(this.locale, {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })
-        : 'none'}</b
-        >
-      </p -->
 
       <!-- weekdays -->
       <ul class="weekdays grid">
@@ -257,7 +229,9 @@ export class DatepickerCalendar extends LitElement {
             return html`<li
               >${new Intl.DateTimeFormat(this.locale, {
                 weekday: 'short',
-              }).format(new Date(2018, 0, day))}
+              })
+                .format(new Date(2018, 0, day))
+                .slice(0, 2)}
             </li>`
           }
         )}
