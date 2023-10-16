@@ -274,7 +274,7 @@ export class DatepickerCalendar extends LitElement {
           (day) => {
             return html`<li
               ><button
-                class="day ${this.getDayState(day)}"
+                class="day ${this.returnDayState(day)}"
                 aria-label="Choose ${new Date(
                   this.date.getFullYear(),
                   this.date.getMonth(),
@@ -299,7 +299,7 @@ export class DatepickerCalendar extends LitElement {
     `
   }
 
-  private getDayState(day: number) {
+  private returnDayState(day: number) {
     const classList = []
     const currentDay = new Date(
       this.date.getFullYear(),
@@ -307,6 +307,14 @@ export class DatepickerCalendar extends LitElement {
       day
     ).getTime()
 
+    // is in range
+    if (
+      this.selectedDateRange.start &&
+      this.selectedDateRange.end &&
+      currentDay > this.selectedDateRange.start.getTime() &&
+      currentDay < this.selectedDateRange.end.getTime()
+    )
+      classList.push('in-range')
     // is range selected
     if (this.selectedDateRange.start) {
       if (this.selectedDateRange.start.getTime() === currentDay)

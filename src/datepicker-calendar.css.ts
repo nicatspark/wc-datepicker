@@ -12,7 +12,7 @@ const styles = css`
   .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0em;
+    gap: 0.4em;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -25,8 +25,9 @@ const styles = css`
     color: var(--weekday-fg);
   }
   .calendar > li {
-    outline: solid 1px var(--day-outline);
+    /* outline: solid 1px var(--day-outline); */
     background-color: #fff;
+    border-radius: 0.2em;
 
     & button {
       aspect-ratio: 1;
@@ -42,10 +43,20 @@ const styles = css`
         background-color: var(--today);
         color: var(--today-fg);
       }
+      &.in-range {
+        background-color: var(--in-range-bg);
+      }
       &.selected {
         background-color: var(--selected-bg);
         color: var(--selected-fg);
       }
+      &.selected-start {
+        border-radius: 5px 0 0 5px;
+      }
+      &.selected-end {
+        border-radius: 0 5px 5px 0;
+      }
+
       &.prevmonth,
       &.nextmonth {
         color: var(--other-month-fg);

@@ -4,6 +4,7 @@ const styles = css`
   :host {
     --selected-bg: rgb(15, 88, 214);
     --selected-fg: #fff;
+    --in-range-bg: #def;
     --today: #eee;
     --today-fg: #000;
     --other-month-fg: #999;
