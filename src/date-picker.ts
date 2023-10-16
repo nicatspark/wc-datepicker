@@ -38,23 +38,28 @@ export class DatePicker extends LitElement {
     this.selectedDate = (e as CustomEvent).detail
     //
     if (this.range) {
-      const dr = this.selectedDateRange
+      const calendarEl = this.shadowRoot?.querySelector('datepicker-calendar')
+      const previousRange = this.selectedDateRange
       const endDateBeforeStartDate =
-        this.selectedDate && dr.start && this.selectedDate > dr.start
-      const bothDateSet = dr.start && dr.end
+        this.selectedDate &&
+        previousRange.start &&
+        this.selectedDate > previousRange.start
+      const bothDateSet = previousRange.start && previousRange.end
       if (bothDateSet || endDateBeforeStartDate) {
         this.selectedDateRange = {
           start: null,
           end: null,
         }
       }
-      const updateObj = dr.start
+      const updateObj = previousRange.start
         ? { end: (e as CustomEvent).detail }
         : { start: (e as CustomEvent).detail }
       this.selectedDateRange = {
-        ...dr,
+        ...previousRange,
         ...updateObj,
       }
+      // TODO: This should not be neccessary
+      if (calendarEl) calendarEl.selectedDateRange = this.selectedDateRange
     }
     this.requestUpdate()
   }
@@ -88,7 +93,6 @@ export class DatePicker extends LitElement {
   range = false
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    // console.log('changedProperties', changedProperties)
     // if (changedProperties.has('_date')) {
     //   this.datePlusOneMonth = new Date(
     //     this._date.getFullYear(),
@@ -96,6 +100,13 @@ export class DatePicker extends LitElement {
     //     1
     //   )
     // }
+    if (changedProperties.has('selectedDateRange')) {
+      console.log(
+        '%c selectedDateRange updated',
+        'color: red',
+        this.selectedDateRange
+      )
+    }
     if (changedProperties.has('date')) {
       this.datePlusOneMonth = new Date(
         new Date(this.date).getFullYear(),

@@ -19,12 +19,20 @@ export class DatepickerCalendar extends LitElement {
 
   override attributeChangedCallback(
     name: string,
-    oldVal: string,
-    newVal: string
+    oldVal: unknown,
+    newVal: unknown
   ) {
     if (name === 'selected-date' && oldVal !== newVal) {
-      this.selectedDate = new Date(newVal)
+      this.selectedDate = new Date(newVal as string)
     }
+    // console.log('attributeChangedCallback', name, oldVal, newVal)
+    // if (name === 'selected-date-range' && oldVal !== newVal) {
+    //   console.log('selected-date-range newVal', newVal)
+    //   this.selectedDateRange = newVal as {
+    //     start: Date | null
+    //     end: Date | null
+    //   }
+    // }
   }
 
   @state()
@@ -33,13 +41,13 @@ export class DatepickerCalendar extends LitElement {
   @state()
   numberOfDaysLastMonth = 0
 
-  @property()
+  @property({ type: Date })
   selectedDate: Date | undefined = undefined
 
   @property({ type: Boolean })
   range = false
 
-  @state()
+  @property({ type: Object })
   selectedDateRange: { start: Date | null; end: Date | null } = {
     start: null,
     end: null,
@@ -55,7 +63,7 @@ export class DatepickerCalendar extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    console.log('changedProperties', changedProperties)
+    console.log('inner changedProperties', changedProperties)
     // only need to check changed properties for an expensive computation.
     // if (changedProperties.has('selectedDateRange')) {
     //   console.log('dateRange updated!!!', this.selectedDateRange)
