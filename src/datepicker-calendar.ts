@@ -25,14 +25,6 @@ export class DatepickerCalendar extends LitElement {
     if (name === 'selected-date' && oldVal !== newVal) {
       this.selectedDate = new Date(newVal as string)
     }
-    // console.log('attributeChangedCallback', name, oldVal, newVal)
-    // if (name === 'selected-date-range' && oldVal !== newVal) {
-    //   console.log('selected-date-range newVal', newVal)
-    //   this.selectedDateRange = newVal as {
-    //     start: Date | null
-    //     end: Date | null
-    //   }
-    // }
   }
 
   @state()
@@ -405,20 +397,7 @@ export class DatepickerCalendar extends LitElement {
   private getCalendarStartDay(date?: Date) {
     const aDate = date ?? this.date
     return new Date(aDate.getFullYear(), aDate.getMonth(), 1)
-    /* .toLocaleString('default', {
-      weekday: 'long',
-    }) */
   }
-
-  // private _onClick() {
-  //   this.count++
-  //   this.dispatchEvent(new CustomEvent('count-changed'))
-  // }
-
-  /**
-   * Formats a greeting
-   * @param name The name to say "Hello" to
-   */
 }
 
 declare global {
