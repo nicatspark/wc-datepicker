@@ -26,6 +26,7 @@ const styles = css`
     box-sizing: border-box;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
   }
   .triangle {
     display: block;

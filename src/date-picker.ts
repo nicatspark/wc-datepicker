@@ -117,17 +117,13 @@ export class DatePicker extends LitElement {
   range = false
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    // if (changedProperties.has('_date')) {
-    //   this.datePlusOneMonth = new Date(
-    //     this._date.getFullYear(),
-    //     this._date.getMonth() + 1,
-    //     1
-    //   )
-    // }
-    if (changedProperties.has('selectedDateRange')) {
+    if (
+      changedProperties.has('selectedDateRange') &&
+      this.selectedDateRange.start
+    ) {
       console.log(
         '%c selectedDateRange updated',
-        'color: red',
+        'color: green; font-weight: bold',
         this.selectedDateRange
       )
     }
@@ -137,8 +133,6 @@ export class DatePicker extends LitElement {
         new Date(this.date).getMonth() + 1,
         1
       )
-      if (new Date(this.date).getFullYear() === 2023)
-        console.log('%c Error date', 'color: red')
       this._date = new Date(this.date)
       this.datePlusOneMonth = new Date(
         this._date.getFullYear(),

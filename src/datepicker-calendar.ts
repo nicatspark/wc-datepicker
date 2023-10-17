@@ -63,19 +63,7 @@ export class DatepickerCalendar extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    // console.log('inner changedProperties', changedProperties)
-    // only need to check changed properties for an expensive computation.
-    // if (changedProperties.has('selectedDateRange')) {
-    //   console.log('dateRange updated!!!', this.selectedDateRange)
-    // }
     if (changedProperties.has('date')) {
-      // Check that this.date is a date object
-      if (!(this.date instanceof Date)) {
-        console.log('Error: Date is ', this.date)
-        this.date = new Date()
-      }
-      // calculate month with days for the app.
-      // console.log('changedProperties', changedProperties)
       this.numberOfDays = new Date(
         this.date.getFullYear(),
         this.date.getMonth() + 1,
