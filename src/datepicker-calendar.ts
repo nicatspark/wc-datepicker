@@ -49,24 +49,36 @@ export class DatepickerCalendar extends LitElement {
   firstDayOfWeek = 0
 
   @property({ type: Date })
-  date = new Date()
+  date?: Date
 
   @property({ reflect: true })
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    if (changedProperties.has('date')) {
-      this.numberOfDays = new Date(
-        this.date.getFullYear(),
-        this.date.getMonth() + 1,
-        0
-      ).getDate()
-      this.numberOfDaysLastMonth = new Date(
-        this.date.getFullYear(),
-        this.date.getMonth(),
-        0
-      ).getDate()
+    if (changedProperties.has('date') && this.date) {
+      this.numberOfDays = this._createDate({
+        month: this.date.getMonth() + 1,
+        day: 0,
+      }).getDate()
+      this.numberOfDaysLastMonth = this._createDate({ day: 0 }).getDate()
     }
+  }
+
+  private _createDate({
+    year,
+    month,
+    day = 1,
+  }: {
+    year?: number
+    month?: number
+    day?: number
+  }) {
+    if (!this.date) return new Date()
+    return new Date(
+      year || this.date.getFullYear(),
+      month || this.date.getMonth(),
+      day
+    )
   }
 
   override render() {
@@ -134,8 +146,8 @@ export class DatepickerCalendar extends LitElement {
           </button>
         </div>
         <h4>
-          ${this.date.toLocaleString(this.locale, { month: 'short' })}
-          ${this.date.getFullYear()}
+          ${this.date?.toLocaleString(this.locale, { month: 'short' })}
+          ${this.date?.getFullYear()}
         </h4>
         <div
           class="calendar-head__controls${this.range &&
@@ -229,11 +241,9 @@ export class DatepickerCalendar extends LitElement {
             return html`<li
               ><button
                 class="day ${this.returnDayState(day)}"
-                aria-label="Choose ${new Date(
-                  this.date.getFullYear(),
-                  this.date.getMonth(),
-                  day
-                ).toLocaleDateString(this.locale, {
+                aria-label="Choose ${this._createDate({
+                  day,
+                }).toLocaleDateString(this.locale, {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'short',
@@ -255,11 +265,7 @@ export class DatepickerCalendar extends LitElement {
 
   private returnDayState(day: number) {
     const classList = []
-    const currentDay = new Date(
-      this.date.getFullYear(),
-      this.date.getMonth(),
-      day
-    ).getTime()
+    const currentDay = this._createDate({ day }).getTime()
 
     // is in range
     if (
@@ -281,18 +287,15 @@ export class DatepickerCalendar extends LitElement {
       classList.push('selected')
 
     // is today
-    if (
-      new Date(this.date.getFullYear(), this.date.getMonth(), day).getTime() ===
-      new Date().setHours(0, 0, 0, 0)
-    )
+    if (this._createDate({ day }).getTime() === new Date().setHours(0, 0, 0, 0))
       classList.push('today')
 
     return classList.join(' ')
   }
 
   private handleSelectDay({
-    year = this.date.getFullYear(),
-    month = this.date.getMonth(),
+    year = this.date?.getFullYear() || 1,
+    month = this.date?.getMonth() || 1,
     day,
   }: {
     day: number
@@ -329,7 +332,10 @@ export class DatepickerCalendar extends LitElement {
           ><button
             class="prevmonth"
             @click="${() => {
-              this.handleSelectDay({ month: this.date.getMonth() - 1, day })
+              this.handleSelectDay({
+                month: (this.date?.getMonth() || 1) - 1,
+                day,
+              })
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
                   detail: { month: -1 },
@@ -354,11 +360,11 @@ export class DatepickerCalendar extends LitElement {
         {
           length:
             7 -
-            new Date(
-              this.date.getFullYear(),
-              this.date.getMonth(),
-              this.numberOfDays + 1
-            ).getDay(),
+            this._createDate({
+              year: this.date?.getFullYear(),
+              month: this.date?.getMonth(),
+              day: this.numberOfDays + 1,
+            }).getDay(),
         },
         (_, i) => i
       ),
@@ -369,7 +375,7 @@ export class DatepickerCalendar extends LitElement {
             class="nextmonth"
             @click="${() => {
               this.handleSelectDay({
-                month: this.date.getMonth() + 1,
+                month: this.date?.getMonth() || 0 + 1,
                 day: day + 1,
               })
               this.dispatchEvent(
@@ -388,15 +394,19 @@ export class DatepickerCalendar extends LitElement {
   }
 
   private calendarMonthStartsOn({
-    year = this.date.getFullYear(),
-    month = this.date.getMonth(),
+    year = this.date?.getFullYear(),
+    month = this.date?.getMonth(),
   } = {}) {
-    return new Date(year, month, 1).getDay()
+    return this._createDate({ year, month, day: 1 }).getDay()
   }
 
   private getCalendarStartDay(date?: Date) {
     const aDate = date ?? this.date
-    return new Date(aDate.getFullYear(), aDate.getMonth(), 1)
+    return this._createDate({
+      year: aDate?.getFullYear(),
+      month: aDate?.getMonth(),
+      day: 1,
+    })
   }
 }
 
