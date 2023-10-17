@@ -1,4 +1,4 @@
-import { LitElement, html, PropertyValues, PropertyValueMap } from 'lit'
+import { LitElement, html, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { styles } from './datepicker-calendar.css'
