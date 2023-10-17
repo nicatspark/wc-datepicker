@@ -2,6 +2,7 @@ import { LitElement, html, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import './datepicker-calendar'
 import { styles } from './date-picker.css'
+import { microAnimation } from '@foundit/micro-animations'
 
 interface DateRange {
   start: Date | null
@@ -156,39 +157,79 @@ export class DatePicker extends LitElement {
   override render() {
     return html`
       <div class="calendar-container">
-        <datepicker-calendar
-          class="start"
-          .date=${this._date}
-          locale="${this.locale}"
-          .range=${this.range}
-          selected-date="${this.selectedDate}"
-          .selected-date-range=${this.selectedDateRange}
-        ></datepicker-calendar>
-        <datepicker-calendar
-          class="end"
-          ?hidden=${!this.range}
-          .date=${this.datePlusOneMonth}
-          locale="${this.locale}"
-          .range=${true}
-          selected-date="${this.selectedDate}"
-          .selected-date-range=${this.selectedDateRange}
-        ></datepicker-calendar>
+        <div class="calendar-inner-container">
+          <datepicker-calendar
+            class="start"
+            .date=${this._date}
+            locale="${this.locale}"
+            .range=${this.range}
+            selected-date="${this.selectedDate}"
+            .selected-date-range=${this.selectedDateRange}
+          ></datepicker-calendar>
+          <datepicker-calendar
+            class="end"
+            ?hidden=${!this.range}
+            .date=${this.datePlusOneMonth}
+            locale="${this.locale}"
+            .range=${true}
+            selected-date="${this.selectedDate}"
+            .selected-date-range=${this.selectedDateRange}
+          ></datepicker-calendar>
+        </div>
       </div>
       <slot></slot>
       <div class="triangle"></div>
     `
   }
 
-  private handleChangeCalendarView({
-    month,
-    year,
-  }: {
-    month?: number
-    year?: number
-  }) {
-    this.date = `${this._date.getFullYear() + (year ?? 0)}-${
-      this._date.getMonth() + (month ?? 0) + 1
-    }`
+  private async handleChangeCalendarView({ month = 0 }: { month?: number }) {
+    const dir = month < 0 ? 1 : -1
+    await this._animateView(dir, () => {
+      this.date = addMonthsToDate(new Date(this.date), month).toLocaleString(
+        this.locale
+      )
+    })
+
+    function addMonthsToDate(date: Date, months: number): Date {
+      const newDate = new Date(date)
+      newDate.setMonth(newDate.getMonth() + months)
+      return newDate
+    }
+  }
+
+  private async _animateView(dir: number, cb: () => void) {
+    const calendarContainer = this.shadowRoot?.querySelector(
+      '.calendar-inner-container'
+    )
+    if (!calendarContainer) return Promise.resolve()
+
+    await microAnimation({
+      element: calendarContainer,
+      duration: 100,
+      easing: 'ease-in',
+      transformEnd: [
+        {
+          opacity: 0,
+          transform: `translateX(calc(16px * ${dir}))`,
+        },
+      ],
+    })
+    cb()
+    return microAnimation({
+      element: calendarContainer,
+      duration: 100,
+      transformInit: {
+        transform: `translateX(${-16 * dir}px)`,
+        opacity: 0,
+      },
+      easing: 'ease-out',
+      transformEnd: [
+        {
+          transform: `translateX(0)`,
+          opacity: 1,
+        },
+      ],
+    })
   }
 }
 

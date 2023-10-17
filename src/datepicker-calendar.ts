@@ -63,7 +63,7 @@ export class DatepickerCalendar extends LitElement {
   locale = 'en-US'
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    console.log('inner changedProperties', changedProperties)
+    // console.log('inner changedProperties', changedProperties)
     // only need to check changed properties for an expensive computation.
     // if (changedProperties.has('selectedDateRange')) {
     //   console.log('dateRange updated!!!', this.selectedDateRange)
@@ -75,7 +75,7 @@ export class DatepickerCalendar extends LitElement {
         this.date = new Date()
       }
       // calculate month with days for the app.
-      console.log('changedProperties', changedProperties)
+      // console.log('changedProperties', changedProperties)
       this.numberOfDays = new Date(
         this.date.getFullYear(),
         this.date.getMonth() + 1,
@@ -131,7 +131,7 @@ export class DatepickerCalendar extends LitElement {
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
-                  detail: { year: -1 },
+                  detail: { month: -12 },
                   bubbles: true,
                   composed: true,
                 })
@@ -169,7 +169,7 @@ export class DatepickerCalendar extends LitElement {
             @click="${() => {
               this.dispatchEvent(
                 new CustomEvent('update-calendar-view', {
-                  detail: { year: 1 },
+                  detail: { month: 12 },
                   bubbles: true,
                   composed: true,
                 })

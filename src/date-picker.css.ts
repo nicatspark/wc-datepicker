@@ -20,7 +20,6 @@ const styles = css`
     position: relative;
     display: block;
     border: solid 1px gray;
-    padding: var(--calendar-padding);
     max-width: var(--max-width);
     font-size: 0.7rem;
     font-family: Helvetica, sans-serif;
@@ -44,6 +43,10 @@ const styles = css`
     display: none !important;
   }
   .calendar-container {
+    overflow: hidden;
+    padding: var(--calendar-padding);
+  }
+  .calendar-inner-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
