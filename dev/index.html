@@ -35,18 +35,29 @@
         margin-inline: auto;
         margin-block-start: 1em;
       }
+      a {
+        display: block;
+        color: hsl(217.99deg 86.9% 54.9%);
+        text-align: center;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+      }
+      a:hover {
+        color: hsl(217.99deg 86.9% 64.9%);
+        transform: scale(1.1);
+      }
     </style>
     <script>
       onload = () => {
-        const myElement = document.querySelector('date-picker')
-        myElement.date = new Date()
+        const rangePicker = document.querySelector('#rangeexample')
         const options = {
           weekday: 'long',
           year: 'numeric',
           month: 'short',
           day: 'numeric',
         }
-        myElement.addEventListener('selected-date-changed', (e) => {
+        rangePicker.addEventListener('selected-date-changed', (e) => {
           const selectedDay = document.querySelector('#selectedday')
           selectedDay.innerText = e.detail.toLocaleDateString('en-us', options)
           Object.assign(selectedDay.style, {
@@ -60,7 +71,7 @@
             })
           })
         })
-        myElement.addEventListener('selected-date-range-changed', (e) => {
+        rangePicker.addEventListener('selected-date-range-changed', (e) => {
           const selectedDateRange = document.querySelector('#selected-range')
           selectedDateRange.innerHTML = `{ ${e.detail.start.toLocaleDateString(
             'en-us',
@@ -82,6 +93,17 @@
         })
       }
 
+      function resetToToday() {
+        const rangePicker = document.querySelector('#rangeexample')
+        rangePicker.date = new Date()
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }
+      }
+
       function openDatePicker() {
         const date = document.querySelector('#dateinput')
         const datePicker = document.querySelector('#singledate')
@@ -95,6 +117,7 @@
               month: 'short',
               day: 'numeric',
             })
+            console.log('id', e.detail)
             closeDatePicker()
           },
           { once: true }
@@ -109,7 +132,8 @@
   </head>
   <body>
     <div id="root"
-      ><date-picker id="second" date="2022,11,02" range></date-picker>
+      ><a onclick="resetToToday()">Go to today</a
+      ><date-picker id="rangeexample" date="2022,11,02" range></date-picker>
       <h1 id="selectedday"></h1><h4 id="selected-range"></h4>
       <div style="text-align: center; margin-top: 2rem">
         <input

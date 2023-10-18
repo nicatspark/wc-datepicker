@@ -18,16 +18,6 @@ export class DatepickerCalendar extends LitElement {
     return ['selected-date']
   }
 
-  override attributeChangedCallback(
-    name: string,
-    oldVal: unknown,
-    newVal: unknown
-  ) {
-    if (name === 'selected-date' && oldVal !== newVal) {
-      this.selectedDate = new Date(newVal as string)
-    }
-  }
-
   @state()
   numberOfDays = 0
 
@@ -41,7 +31,7 @@ export class DatepickerCalendar extends LitElement {
   range = false
 
   @property({ type: String })
-  eventId = ''
+  eventid!: string
 
   @property({ type: Object })
   selectedDateRange: { start: Date | null; end: Date | null } = {
@@ -57,6 +47,17 @@ export class DatepickerCalendar extends LitElement {
 
   @property({ reflect: true })
   locale = 'en-US'
+
+  override attributeChangedCallback(
+    name: string,
+    oldVal: unknown,
+    newVal: unknown
+  ) {
+    console.log('name', name, newVal, oldVal)
+    if (name === 'selected-date' && oldVal !== newVal) {
+      this.selectedDate = new Date(newVal as string)
+    }
+  }
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     if (changedProperties.has('date') && this.date) {
@@ -311,7 +312,7 @@ export class DatepickerCalendar extends LitElement {
       new CustomEvent('selected-date-changed', {
         detail: {
           date: new Date(year, month, day),
-          id: this.eventId,
+          id: this.eventid,
         },
         composed: true,
       })

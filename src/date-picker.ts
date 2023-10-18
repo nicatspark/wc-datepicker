@@ -137,6 +137,7 @@ export class DatePicker extends LitElement {
         new Date(this.date).getMonth() + 1,
         1
       )
+      console.log('%c ###Date', 'color:red', this.date)
       this._date = new Date(this.date)
       this.datePlusOneMonth = new Date(
         this._date.getFullYear(),
@@ -158,6 +159,7 @@ export class DatePicker extends LitElement {
         <div class="calendar-inner-container">
           <datepicker-calendar
             class="start"
+            .eventid="${this.id}"
             .date=${this._date}
             locale="${this.locale}"
             .range=${this.range}
@@ -166,6 +168,7 @@ export class DatePicker extends LitElement {
           ></datepicker-calendar>
           <datepicker-calendar
             class="end"
+            .eventid="${this.id}"
             ?hidden=${!this.range}
             .date=${this.datePlusOneMonth}
             locale="${this.locale}"
