@@ -36,7 +36,7 @@ export class DatePicker extends LitElement {
   }
 
   private _handleSelectedDate = (e: Event) => {
-    this.selectedDate = (e as CustomEvent).detail
+    this.selectedDate = (e as CustomEvent).detail.date
     // range date selection
     if (this.range) {
       const calendarEl = this.shadowRoot?.querySelectorAll(
@@ -55,8 +55,8 @@ export class DatePicker extends LitElement {
         }
       } else {
         const updateObj = previousRange.start
-          ? { end: (e as CustomEvent).detail }
-          : { start: (e as CustomEvent).detail }
+          ? { end: (e as CustomEvent).detail.date }
+          : { start: (e as CustomEvent).detail.date }
         this.selectedDateRange = {
           ...previousRange,
           ...updateObj,
@@ -73,6 +73,7 @@ export class DatePicker extends LitElement {
             detail: {
               ...this.selectedDateRange,
               days,
+              id: this.id,
             },
             composed: true,
           })
@@ -101,10 +102,13 @@ export class DatePicker extends LitElement {
   }
 
   @state()
-  private _date = new Date('')
+  private _date?: Date
 
   @property({ type: String, reflect: true })
   date = new Date().toLocaleString(this.locale)
+
+  @property({ type: String })
+  override id = ''
 
   @state()
   datePlusOneMonth = new Date(
@@ -140,7 +144,7 @@ export class DatePicker extends LitElement {
         1
       )
     }
-    if (changedProperties.has('locale')) {
+    if (changedProperties.has('locale') && this._date) {
       this.date = this._date.toLocaleString(this.locale)
     }
     if (changedProperties.has('range')) {

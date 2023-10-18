@@ -28,6 +28,13 @@
       date-picker {
         margin-inline: auto;
       }
+      #dateinput {
+        padding: 0.5rem;
+      }
+      #singledate {
+        margin-inline: auto;
+        margin-block-start: 1em;
+      }
     </style>
     <script>
       onload = () => {
@@ -74,12 +81,45 @@
           })
         })
       }
+
+      function openDatePicker() {
+        const date = document.querySelector('#dateinput')
+        const datePicker = document.querySelector('#singledate')
+        datePicker.removeAttribute('hidden')
+        datePicker.addEventListener(
+          'selected-date-changed',
+          (e) => {
+            e.stopPropagation()
+            date.value = e.detail.date.toLocaleDateString('en-us', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+            closeDatePicker()
+          },
+          { once: true }
+        )
+      }
+      function closeDatePicker() {
+        const date = document.querySelector('#dateinput')
+        const datePicker = document.querySelector('#singledate')
+        datePicker.setAttribute('hidden', 'true')
+      }
     </script>
   </head>
   <body>
     <div id="root"
-      ><date-picker date="2022,11,02" range></date-picker>
-      <h1 id="selectedday"></h1><h4 id="selected-range"></h4
-    ></div>
+      ><date-picker id="second" date="2022,11,02" range></date-picker>
+      <h1 id="selectedday"></h1><h4 id="selected-range"></h4>
+      <div style="text-align: center; margin-top: 2rem">
+        <input
+          type="text"
+          id="dateinput"
+          placeholder="Select date"
+          onfocus="openDatePicker()"
+        />
+        <date-picker id="singledate" date="2022,11,02" hidden></date-picker>
+      </div>
+    </div>
   </body>
 </html>

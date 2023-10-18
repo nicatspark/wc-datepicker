@@ -6,7 +6,8 @@ import { styles } from './datepicker-calendar.css'
 /**
  * A Datepicker-calendar.
  *
- * @fires selected-date-changed - Indicates when the count changes
+ * @fires selected-date-changed - Indicates when a date i selected
+ * @fires selected-date-range-changed - Indicates when the date range updated
  * @slot - This element has a slot
  */
 @customElement('datepicker-calendar')
@@ -38,6 +39,9 @@ export class DatepickerCalendar extends LitElement {
 
   @property({ type: Boolean })
   range = false
+
+  @property({ type: String })
+  eventId = ''
 
   @property({ type: Object })
   selectedDateRange: { start: Date | null; end: Date | null } = {
@@ -305,7 +309,10 @@ export class DatepickerCalendar extends LitElement {
     // this.selectedDate = new Date(year, month, day)
     this.dispatchEvent(
       new CustomEvent('selected-date-changed', {
-        detail: new Date(year, month, day),
+        detail: {
+          date: new Date(year, month, day),
+          id: this.eventId,
+        },
         composed: true,
       })
     )
